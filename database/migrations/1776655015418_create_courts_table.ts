@@ -9,8 +9,7 @@ export default class extends BaseSchema {
       table.string('court_name')
       table.integer('price_per_hour')
       table.enum('status',['available', 'maintenance']).defaultTo('available')
-      table.timestamp('created_at')
-      table.timestamp('updated_at')
+      table.timestamps(true, true)
     })
   }
 

@@ -5,6 +5,15 @@ export default class Court extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
+  @column()
+  declare courtName: string
+
+  @column()
+  declare pricePerHour: number
+
+  @column()
+  declare status: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
