@@ -198,9 +198,8 @@ select,
 }
 
 .footer {
-  background-color: #123524;
-  color: #ffffff;
-  padding: 32px 0;
+  background-color: #a8d5b5;
+  padding: 18px 0;
   text-align: center;
 }
 
@@ -227,4 +226,33 @@ select,
     align-items: stretch;
     flex-direction: column;
   }
+
+/* Booking Page */
+.booking-container {
+  margin-top: 30px;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.slot-btn {
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.slot-btn.active {
+  background-color: #21ba45 !important;
+  color: white !important;
+}
+
+/* ===== Global ===== */
+
+.page-title {
+  margin-bottom: 20px;
+}
+
 }

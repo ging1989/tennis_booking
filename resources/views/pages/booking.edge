@@ -1,0 +1,75 @@
+@layouts.master({title: 'Book a court'})
+
+
+<div class="ui container booking-container">
+    <h2 class="ui header page-title">จองสนาม</h2>
+</div>
+
+<div class="ui segment">
+    <div class="field">
+        <label>เลือกวันที่</label>
+        <input 
+            type="date"
+            id="booking-date"
+            value="{{ bookingDate || '' }}"
+            onchange="changeDate(this.value)"
+        >
+    </div>
+</div>
+
+<div class="ui segment">
+    <h4>เลือกเวลา</h4>
+    <div id="slot-grid" class="slot-grid"></div>
+</div>
+    
+<button class="ui primary button" onclick="submitBooking()">จองเลย</button>
+
+<script>
+    const court_id = {{ courtId }}
+    const booked_slots = {{{ bookedSlotsJson || '[]'}}}
+
+    const all_slots = [
+        '07:00', '09:00', '10:00', '11:00', '12:00',
+        '13:00', '14:00', '15:00', '16:00', '17:00',
+        '18:00', '19:00', '20:00', '21:00', '22:00'
+    ]
+
+    let selectedSlot = null
+</script>
+
+<script>
+    function buildSlots() {
+        const grid = document.getElementById('slot-grid')
+        let html = ''
+
+        all_slots.forEach(time => {
+            const isBooked = booked_slots.includes(time)
+
+            if(isBooked) {
+                html += `
+                <div class="ui button disabled">
+                ${time}
+                </div>`
+            } else {
+                html += `
+                <div class="ui button" onclick="selectSlot('${time}')" id="slot-${time}">
+                ${time}
+                </div>`
+            }
+        })
+
+        grid.innerHTML = html
+    }
+
+    function selectedSlot(time) {
+        document.querySelectorAll('[id^="slot-"]').forEach(el => {
+            el.classList.remove('green')
+        })
+
+        document.getElementById('slot-' + time).classList.add('green')
+    }
+
+    document.addEventListener('DOMContentLoaded', buildSlots)
+</script>
+    
+@end

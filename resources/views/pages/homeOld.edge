@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Urban Tennis Club</title>
+  <link rel="stylesheet" type="text/css" href="/Semantic/semantic.min.css">
+  @vite(['resources/js/app.js'])
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="ui secondary menu">
+    <div class="ui container">
+      <a class="header item brand-item">
+        <img src="/images/court-logo.png" alt="Urban Tennis Club logo" class="court-logo">
+      </a>
+      <a class="item">หน้าแรก</a>
+      <a class="item">สนาม</a>
+      <a class="item">จองสนาม</a>
+      <div class="right menu">
+        <a class="item">เข้าสู่ระบบ</a>
+        <a class="ui button item">สมัครสมาชิก</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="ui segment hero-segment">
+    <!-- <h1>Urban Tennis Club</h1> -->
+    <h1>จองง่าย เล่นได้ทันที</h1>
+    <p>เปิดให้บริการทุกวัน เวลา 06:00 – 22:00 น.</p>
+    <div class="hero-actions">
+      <a class="ui large white button">จองสนามเลย</a>
+    </div>
+  </div>
+
+  <!-- Courts
+  <div class="ui container courts-section">
+    <h2 class="ui header section-title">สนามทั้งหมด</h2>
+    <div class="ui three stackable cards courts-grid">
+      @each(court in courts)
+        <div class="card court-card">
+          <div class="content">
+            <div class="header">{{ court.courtName }}</div>
+            <div class="meta court-status">
+              @if(court.status === 'available')
+                <span class="ui small green label">ว่าง</span>
+              @else
+                <span class="ui small red label">ซ่อมบำรุง</span>
+              @end
+            </div>
+            <div class="description court-price">
+              ราคา {{ court.pricePerHour }} บาท/ชั่วโมง
+            </div>
+          </div>
+          <div class="extra content">
+            @if(court.status === 'available')
+              <a class="ui teal fluid button">
+                จองสนามนี้
+              </a>
+            @else
+              <a class="ui disabled fluid button">ปิดซ่อมบำรุง</a>
+            @end
+          </div>
+        </div>
+      @end
+    </div>
+  </div> -->
+
+  <div class="ui container courts-section">
+    <h2 class="ui header section-title" id="today-header"></h2>
+
+    <script>
+      const today = new Date();
+
+      const formattedDate = today.toLocaleDateString('th-TH', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      document.getElementById("today-header").innerText ="ตารางสนามว่าง วันที่ " + formattedDate;
+
+    </script>
+
+    <div class="ui three stackable cards courts-grid">
+      @each(item in courtSlots)
+        <div class="card court-card">
+          <div class="content">
+            <div class="header">{{ item.court.courtName }}</div>
+            <div class="slot-grid">
+              @each(slot in item.slots)
+                @if(slot.available)
+                  <a class="slot available" href="/booking?court={{ item.court.id }}&time={{ slot.time }}">
+                    {{ slot.time }}
+                  </a>
+                @else
+                  <span class="slot unavailable">
+                    {{ slot.time }}
+                  </span>
+                @end
+              @end
+            </div>
+          </div>
+        </div>
+      @end
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="ui container">
+      <p>🎾 Urban Tennis Club · โทร 02-xxx-xxxx · เปิดทุกวัน 06:00 – 22:00 น.</p>
+      <p class="footer-copyright">© 2026 Urban Tennis Club. All rights reserved.</p>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <script src="/Semantic/semantic.min.js"></script>
+
+</body>
+</html>

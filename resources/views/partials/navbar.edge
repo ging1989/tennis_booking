@@ -1,0 +1,41 @@
+<div class="ui secondary menu">
+    <div class="ui container">
+        
+        <!-- Logo -->
+        <a href="/" class="header item brand-item">
+            <img src="/images/court-logo.png" alt="Urban Tennis Club Logo" class="court-logo">
+        </a>
+
+        <!-- Menu -->
+        <a href="/" class="item">หน้าแรก</a>
+        <a href="/courts" class="item {{ request.url().startsWith('/courts') ? 'active' : '' }}">สนาม</a>
+        <a href="/booking" class="item {{ request.url().startsWith('/booking') ? 'active' : ''}}">จองสนาม</a>
+
+        <!-- Right Menu -->
+        <div class="right menu">
+            <a href="/login" class="item">เข้าสู่ระบบ</a>
+            <a href="/register" class="ui primary button item">สมัครสมาชิก</a>
+        </div>
+        
+        {{--
+        <div class="right menu">
+            @if(auth.user) 
+                <div class="ui dropdown item">
+                    {{ auth.user.username }}
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a href="/profile" class="item">โปรไฟล์</a>
+                        <a href="/my-booking" class="item">การจองของฉัน</a>
+                        <div class="divider"></div>
+                        <a href="/logout" class="item">ออกจากระบบ</a>
+                    </div>
+                </div>
+            @else
+                <a href="/login" class="item">เข้าสู่ระบบ</a>
+                <a href="/register" class="ui primary button item">สมัครสมาชิก</a>
+            @endif
+        </div>
+        --
+        --}}
+    </div>
+</div>

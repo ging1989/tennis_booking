@@ -1,16 +1,8 @@
-@layouts.master({title: 'Urban Tennis Club'})
+@layouts.master({title: 'Court'})
 
-    <div class="ui segment hero-segment">
-        <h1>จองง่าย เล่นได้ทันที</h1>
-        <p>เปิดให้บริการทุกวัน เวลา 07:00 - 22:00 น.</p>
-        <div class="hero-actions">
-            <a class="ui large white button">จองสนามเลย</a>
-        </div>
-    </div>
-
-      <div class="ui container courts-section">
-    <h2 class="ui header section-title" id="today-header"></h2>
-
+    <h2 id="today-header"></h2>
+        
+    
     <script>
       const today = new Date();
 
@@ -46,6 +38,4 @@
         </div>
       @end
     </div>
-  </div>
-
 @end
