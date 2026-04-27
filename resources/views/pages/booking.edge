@@ -8,12 +8,19 @@
 <div class="ui segment">
     <div class="field">
         <label>เลือกวันที่</label>
-        <input 
-            type="date"
-            id="booking-date"
-            value="{{ bookingDate || '' }}"
-            onchange="changeDate(this.value)"
-        >
+        <input type="date" id="booking-date" value="{{ bookingDate || '' }}" onchange="changeDate(this.value)">
+    </div>
+</div>
+
+<div class="ui segment" id="court-section">
+    <div class="field">
+        <label>เลือกสนาม</label>
+        <select class="ui dropdown" id="court-select" onchange="onCourtChange(this.value)">
+            <option value="">เลือกสนาม</option>
+            @each(court in courts)
+                <option value="{{ court.id }}">{{ court.courtName }}</option>
+            @end
+        </select>
     </div>
 </div>
 
@@ -25,8 +32,16 @@
 <button class="ui primary button" onclick="submitBooking()">จองเลย</button>
 
 <script>
-    const court_id = {{ courtId }}
-    const booked_slots = {{{ bookedSlotsJson || '[]'}}}
+    function changeDate(date) {
+        const courtId = document.getElementById('court-select').value
+        if (courtId) {
+            onCourtChange(courtId)
+        }
+    }
+</script>
+
+<script>
+    let booked_slots = {{{ bookedSlotsJson || '[]'}}}
 
     const all_slots = [
         '07:00', '09:00', '10:00', '11:00', '12:00',
@@ -34,7 +49,7 @@
         '18:00', '19:00', '20:00', '21:00', '22:00'
     ]
 
-    let selectedSlot = null
+    let selectedTime = null
 </script>
 
 <script>
@@ -61,15 +76,26 @@
         grid.innerHTML = html
     }
 
-    function selectedSlot(time) {
+    function selectSlot(time) {
         document.querySelectorAll('[id^="slot-"]').forEach(el => {
             el.classList.remove('green')
         })
 
         document.getElementById('slot-' + time).classList.add('green')
+        selectedTime = time
     }
 
     document.addEventListener('DOMContentLoaded', buildSlots)
+</script>
+
+<script>
+    async function onCourtChange(courtId) {
+        const date = document.getElementById('booking-date').value
+        const res = await fetch('/api/available-slots?date=' + date + '&court_id=' + courtId)
+        const data = await res.json()
+        booked_slots = data.bookedSlotsJson
+        buildSlots
+    }
 </script>
     
 @end

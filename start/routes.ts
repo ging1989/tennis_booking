@@ -19,3 +19,5 @@ router.get('/', [HomeController, 'index']).as('home')
 router.get('/court', [CourtsController, 'index']).as('courts')
 
 router.get('/booking', [BookingsController, 'index']).as('bookings')
+
+router.get('/api/available-slots', [BookingsController, 'availableSlots'])

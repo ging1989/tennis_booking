@@ -5,6 +5,15 @@ export default class Booking extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
+  @column()
+  declare courtId: number
+
+  @column()
+  declare bookingDate: string
+
+  @column()
+  declare timeStart: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
