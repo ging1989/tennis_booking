@@ -1,0 +1,104 @@
+@layouts.master({title: 'Book a court'})
+
+
+<div class="ui container booking-container">
+    <h2 class="ui header page-title">จองสนาม</h2>
+</div>
+
+<div class="ui segment">
+    <div class="field">
+        <label>เลือกวันที่</label>
+        <input type="date" id="booking-date" value="{{ bookingDate || '' }}" onchange="changeDate(this.value)">
+    </div>
+</div>
+
+<div class="ui segment" id="court-section">
+    <div class="field">
+        <label>เลือกสนาม</label>
+        <select class="ui dropdown" id="court-select" onchange="onCourtChange(this.value)">
+            <option value="">เลือกสนาม</option>
+            @each(court in courts)
+                <option value="{{ court.id }}">{{ court.courtName }}</option>
+            @end
+        </select>
+    </div>
+</div>
+
+<div class="ui segment">
+    <h4>เลือกเวลา</h4>
+    <div id="slot-grid" class="slot-grid"></div>
+</div>
+    
+<div class="booking-action">
+    <button class="ui primary button" onclick="submitBooking()">จองเลย</button>
+</div>
+
+<script>
+    function changeDate(date) {
+        const courtId = document.getElementById('court-select').value
+        if (courtId) {
+            onCourtChange(courtId)
+        }
+    }
+</script>
+
+<script>
+    let booked_slots = {{{ bookedSlotsJson || '[]'}}}
+
+    const all_slots = [
+        '07:00', '08:00', '09:00', '10:00',
+        '11:00', '12:00','13:00', '14:00', 
+        '15:00', '16:00', '17:00','18:00',
+        '19:00', '20:00', '21:00', '22:00'
+    ]
+
+    let selectedTime = null
+</script>
+
+<script>
+    function buildSlots() {
+        const grid = document.getElementById('slot-grid')
+        let html = ''
+
+        all_slots.forEach(time => {
+            const isBooked = booked_slots.includes(time)
+
+            if(isBooked) {
+                html += `
+                <div class="ui button disabled">
+                ${time}
+                </div>`
+            } else {
+                html += `
+                <div class="ui button" onclick="selectSlot('${time}')" id="slot-${time}">
+                ${time}
+                </div>`
+            }
+        })
+
+        grid.innerHTML = html
+    }
+
+    function selectSlot(time) {
+        document.querySelectorAll('[id^="slot-"]').forEach(el => {
+            el.classList.remove('green')
+        })
+
+        document.getElementById('slot-' + time).classList.add('green')
+        selectedTime = time
+    }
+
+    document.addEventListener('DOMContentLoaded', buildSlots)
+</script>
+
+<script>
+    async function onCourtChange(courtId) {
+        const date = document.getElementById('booking-date').value
+        const res = await fetch('/api/available-slots?date=' + date + '&court_id=' + courtId)
+        const data = await res.json()
+        booked_slots = data.bookedSlotsJson
+        buildSlots
+    }
+</script>
+    
+@end

@@ -3,9 +3,12 @@ import Court from '#models/court'
 import Booking from '#models/booking'
 
 export default class BookingsController {
-    async index({view}: HttpContext) {
+    async index({view, request}: HttpContext) {
         const courts = await Court.query().orderBy('court_name', 'asc')
-        return view.render('pages/booking', { courts })
+        const courtId = request.input('court')
+        const court = courtId ? await Court.find(courtId) : null
+        const bookingDate = request.input('date') || new Date().toISOString().split('T')[0]
+        return view.render('pages/booking', { courts, court, bookingDate })
     }
 
 

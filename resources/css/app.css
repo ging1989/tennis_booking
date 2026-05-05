@@ -226,6 +226,7 @@ select,
     align-items: stretch;
     flex-direction: column;
   }
+}
 
 /* Booking Page */
 .booking-container {
@@ -234,7 +235,7 @@ select,
 
 .slot-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 
@@ -249,10 +250,252 @@ select,
   color: white !important;
 }
 
+.booking-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+  margin-bottom: 25px;
+}
+
 /* ===== Global ===== */
 
 .page-title {
   margin-bottom: 20px;
 }
 
+/* ===== Booking Redesign ===== */
+
+.booking-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0 24px;
+  gap: 0;
 }
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #ccc;
+  background: #fff;
+}
+
+.step.active .step-circle {
+  background: #16643b;
+  border-color: #16643b;
+  color: #fff;
+}
+
+.step-label {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+.step.active .step-label {
+  color: #16643b;
+  font-weight: 600;
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: #ddd;
+  max-width: 80px;
+  margin-bottom: 24px;
+}
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto 48px;
+  padding: 0 16px;
+}
+
+.booking-main {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 28px;
+}
+
+.booking-main h2 {
+  font-size: 1.4rem;
+  color: #16643b;
+  margin-bottom: 4px;
+}
+
+.booking-subtitle {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.court-info-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid #c3e6d0;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 20px;
+  background: #f2faf6;
+}
+
+.court-info-name {
+  font-weight: 700;
+  color: #16643b;
+  margin-bottom: 4px;
+}
+
+.court-info-detail {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.booking-field {
+  margin-bottom: 16px;
+}
+
+.booking-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.booking-field input[type="date"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.slot-status {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+#selected-label {
+  font-weight: 600;
+  color: #16643b;
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.slot-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.slot-card:hover {
+  background: #e8f7ef;
+  border-color: #16643b;
+}
+
+.slot-card.selected {
+  background: #16643b;
+  border-color: #16643b;
+  color: #fff;
+}
+
+.slot-card.booked {
+  background: #f5f5f5;
+  color: #bbb;
+  cursor: default;
+  pointer-events: none;
+}
+
+.slot-card .slot-start {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.slot-card .slot-end {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.slot-card.booked .slot-end::after {
+  content: 'Booked';
+  display: block;
+  font-size: 0.75rem;
+}
+
+.continue-btn {
+  width: 100%;
+  padding: 14px;
+  background: #16643b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.continue-btn:hover {
+  background: #0f5130;
+}
+
+.booking-summary {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  height: fit-content;
+}
+
+.booking-summary h3 {
+  font-size: 1.1rem;
+  color: #16643b;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.95rem;
+}
+
+.summary-total {
+  margin-top: 16px;
+  background: #16643b;
+  color: #fff;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+
