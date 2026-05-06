@@ -35,7 +35,19 @@ export default class BookingsController {
         const bookingDate = request.input('date')
         const slots = request.input('slots')
 
-        return view.render('pages/booking_details', {courtId, bookingDate, slots})
+        const court = courtId ? await Court.find(courtId) : null
+        const slotArr: string[] = slots ? slots.split(',').sort(): []
+        const timeStart = slotArr[0] ?? ''
+
+        const lastSlot = slotArr[slotArr.length - 1] ?? ''
+        const [h] = lastSlot.split(':').map(Number)
+        const timeEnd = lastSlot ? `${String(h + 1).padStart(2, '0')}:00` : ''
+       
+        const totalPrice = slotArr.length*300
+        const bookingNo = `BK-${(bookingDate ?? '').replace(/-/g,'')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+        
+        return view.render('pages/booking_details', {
+            court, courtId, bookingDate, slotArr, timeStart, timeEnd, totalPrice, bookingNo})
     }
 
     async store({request, response}: HttpContext) {

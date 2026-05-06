@@ -386,6 +386,19 @@ select,
   font-size: 1rem;
 }
 
+.booking-field input[type="text"],
+.booking-field input[type="tel"],
+.booking-field input[type="email"],
+.booking-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #f9fafb;
+}
+
 .slot-status {
   font-size: 0.9rem;
   color: #555;
@@ -503,5 +516,91 @@ select,
   display: flex;
   justify-content: space-between;
 }
+
+.booking-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.details-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+.details-divider::before,
+  .details-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.member-login-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #16643b;
+  box-sizing: border-box;
+  }
+
+.member-login-btn:hover {
+  background: #16643b;
+  background: #f2faf6;
+}
+
+.details-actions {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+}
+
+.details-actions .continue-btn {
+  width: 100%;
+}
+
+.back-btn {
+  display: block;
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  color: #555;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.back-btn:hover {
+  background: #f5f5f5;
+}
+
+.booking-field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.booking-field textarea:focus,
+.booking-field input:focus {
+  outline: none;
+  border-color: #16643b;
+}
+
+
 
 

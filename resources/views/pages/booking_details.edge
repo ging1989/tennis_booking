@@ -15,11 +15,68 @@
   </div>
 
   <div class="step-line"></div>
-  
+
   <div class="step">
     <div class="step-circle">3</div>
     <div class="step-label">Payment</div>
   </div>
+</div>
+
+<div class="booking-layout">
+
+    <div class="booking-main">
+        <h2>Your details</h2>
+        <p class="booking-subtitle">No account needed</p>
+
+        <form action="/booking/store" method="POST">
+          {{ csrfField() }}
+          <input type="hidden" name="court_id" value="{{ courtId }}">
+          <input type="hidden" name="booking_date" value="{{ bookingDate }}">
+          <input type="hidden" name="time_start" value="{{ timeStart }}">
+          <input type="hidden" name="time_end" value="{{ timeEnd }}">
+          <input type="hidden" name="total_price" value="{{ totalPrice }}">
+          <input type="hidden" name="booking_no" value ="{{ bookingNo }}">
+          <input type="hidden" name="customer_type" value="guest">
+
+          <div class="booking-field">
+            <label>Full Name</label>
+            <input type="text" name="customer_name" placeholder="Enter your full name" required>
+          </div>
+
+          <div class="booking-field-row">
+            <div class="booking-field">
+              <label>Phone</label>
+              <input type="text" name="customer_phone" placeholder="0812345678" required>
+            </div>
+            
+            <div class="booking-field">
+              <label>Email</label>
+              <input type="text" name="customer_email" placeholder="email@example.com" required>
+            </div>
+          </div>
+
+
+          <div class="details-divider"><span>or</span></div>
+
+          <a href="/login" class="member-login-btn">Login as a member to get discount</a>
+
+          <div class="details-actions">
+            <a href="javascript:history.back()" class="back-btn">← Back</a>
+            <button class="continue-btn" type="submit">Continue to payment →</button>
+          </div>
+        </form>
+    </div>
+
+      <!-- Right: Booking Summary -->
+    <div class="booking-summary">
+      <h3>Booking summary</h3>
+      <div class="summary-row"><span>Court</span><span>{{ court ? court.courtName : '-' }}</span></div>
+      <div class="summary-row"><span>Date</span><span>{{ bookingDate ?? '-' }}</span></div>
+      <div class="summary-row"><span>Time</span><span>{{ timeStart && timeEnd ? timeStart + '-' + timeEnd: '-' }}</span></div>
+      <div class="summary-row"><span>Duration</span><span>{{ slotArr.length ? slotArr.length + ' hr' : '-' }}</span></div>
+      <div class="summary-row"><span>Court fee</span><span>{{ totalPrice ? '฿' + totalPrice : '-' }}</span></div>
+      <div class="summary-total">Total: <span>฿{{ totalPrice ?? 0 }}</span></div>
+    </div>
 </div>
     
 @end
