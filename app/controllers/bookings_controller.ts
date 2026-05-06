@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Court from '#models/court'
 import Booking from '#models/booking'
+import { storeBookingValidator } from '#validators/booking_validator'
 
 export default class BookingsController {
     async index({view, request}: HttpContext) {
@@ -16,6 +17,10 @@ export default class BookingsController {
         const date = request.input('date')
         const courtId = request.input('court_id')
 
+        if (!date || !courtId) {
+            return response.badRequest({error: 'date and court id are required'})
+        }
+
         const bookings = await Booking.query()
             .where('booking_date', date)
             .where('court_id', courtId)
@@ -25,5 +30,19 @@ export default class BookingsController {
         return response.json({bookedSlots})
     }
 
+    async details({view, request}: HttpContext) {
+        const courtId = request.input('court_id')
+        const bookingDate = request.input('date')
+        const slots = request.input('slots')
+
+        return view.render('pages/booking_details', {courtId, bookingDate, slots})
+    }
+
+    async store({request, response}: HttpContext) {
+        const data = await request.validateUsing(storeBookingValidator)
+        await Booking.create(data)
+        
+        return response.redirect('/booking')
+    }
 
 }

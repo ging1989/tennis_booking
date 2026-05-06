@@ -19,7 +19,12 @@
 </div>
 
 <!-- Main Layout -->
-<div class="booking-layout">
+<div
+  class="booking-layout"
+  id="booking-page"
+  data-court-name="{{ court ? court.courtName : '' }}"
+  data-booked-slots='{{{ bookedSlotsJson || "[]" }}}'
+>
 
   <!-- Left: Time Slot Selection -->
   <div class="booking-main">
@@ -37,13 +42,13 @@
     <!-- Date -->
     <div class="booking-field">
       <label>Date</label>
-      <input type="date" id="booking-date" value="{{ bookingDate || '' }}" onchange="changeDate(this.value)">
+      <input type="date" id="booking-date" value="{{ bookingDate || '' }}">
     </div>
 
     <!-- Court Select -->
     <div class="booking-field">
       <label>เลือกสนาม</label>
-      <select class="ui dropdown" id="court-select" onchange="onCourtChange(this.value)">
+      <select class="ui dropdown" id="court-select">
         <option value="">เลือกสนาม</option>
         @each(c in courts)
           <option value="{{ c.id }}" {{ court && court.id === c.id ? 'selected' : '' }}>{{ c.courtName }}</option>
@@ -58,7 +63,7 @@
     <div id="slot-grid" class="slot-grid"></div>
 
     <!-- Continue Button -->
-    <button class="continue-btn" onclick="submitBooking()">Continue →</button>
+    <button class="continue-btn" id="continue-booking">Continue →</button>
   </div>
 
   <!-- Right: Booking Summary -->
@@ -73,123 +78,5 @@
   </div>
 
 </div>
-
-<script>
-  const PRICE_PER_SLOT = 300
-  const MAX_SLOTS = 3
-  let currentCourtName = "{{ court ? court.courtName : '' }}"
-
-  const all_slots = [
-    '07:00','08:00','09:00','10:00','11:00','12:00',
-    '13:00','14:00','15:00','16:00','17:00','18:00',
-    '19:00','20:00','21:00','22:00'
-  ]
-
-  let booked_slots = {{{ bookedSlotsJson || '[]' }}}
-  let selected_slots = []
-
-  function slotToMinutes(t) {
-    const [h, m] = t.split(':').map(Number)
-    return h * 60 + m
-  }
-
-  function nextHour(t) {
-    const [h, m] = t.split(':').map(Number)
-    return String(h + 1).padStart(2, '0') + ':' + String(m).padStart(2, '0')
-  }
-
-  function isConsecutive(slots) {
-    if (slots.length <= 1) return true
-    const sorted = [...slots].sort((a, b) => slotToMinutes(a) - slotToMinutes(b))
-    for (let i = 1; i < sorted.length; i++) {
-      if (slotToMinutes(sorted[i]) - slotToMinutes(sorted[i - 1]) !== 60) return false
-    }
-    return true
-  }
-
-  function buildSlots() {
-    const grid = document.getElementById('slot-grid')
-    grid.innerHTML = all_slots.map(time => {
-      const isBooked = booked_slots.includes(time)
-      const isSelected = selected_slots.includes(time)
-      const endTime = nextHour(time)
-      let cls = 'slot-card'
-      if (isBooked) cls += ' booked'
-      else if (isSelected) cls += ' selected'
-      return `
-        <div class="${cls}" onclick="selectSlot('${time}')">
-          <div class="slot-start">${time}</div>
-          <div class="slot-end">–${endTime}</div>
-        </div>`
-    }).join('')
-  }
-
-  function selectSlot(time) {
-    if (booked_slots.includes(time)) return
-
-    if (selected_slots.includes(time)) {
-      selected_slots = selected_slots.filter(s => s !== time)
-    } else {
-      const test = [...selected_slots, time]
-      if (test.length > MAX_SLOTS) return
-      if (!isConsecutive(test)) return
-      selected_slots.push(time)
-    }
-
-    buildSlots()
-    updateSummary()
-  }
-
-  function formatDate(val) {
-    if (!val) return '-'
-    const [y, m, d] = val.split('-')
-    return `${d}-${m}-${y}`
-  }
-
-  function updateSummary() {
-    const dateVal = document.getElementById('booking-date').value
-    const sorted = [...selected_slots].sort((a, b) => slotToMinutes(a) - slotToMinutes(b))
-    const count = sorted.length
-    const fee = count * PRICE_PER_SLOT
-
-    document.getElementById('selected-label').textContent = count ? sorted.join(', ') : 'none'
-    document.getElementById('sum-court').textContent = currentCourtName || '-'
-    document.getElementById('sum-date').textContent = formatDate(dateVal)
-    document.getElementById('sum-time').textContent = count ? `${sorted[0]} – ${nextHour(sorted[sorted.length - 1])}` : '-'
-    document.getElementById('sum-duration').textContent = count ? `${count} hr${count > 1 ? 's' : ''}` : '-'
-    document.getElementById('sum-fee').textContent = count ? `฿${fee}` : '-'
-    document.getElementById('sum-total').textContent = `฿${fee}`
-  }
-
-  function changeDate(date) {
-    const courtId = document.getElementById('court-select')?.value
-    if (courtId) onCourtChange(courtId)
-  }
-
-  async function onCourtChange(courtId) {
-    const date = document.getElementById('booking-date').value
-    const select = document.getElementById('court-select')
-    const selectedOption = select.options[select.selectedIndex]
-    currentCourtName = courtId ? selectedOption.text : ''
-    document.querySelector('.court-info-name').textContent = currentCourtName
-
-    const res = await fetch('/api/available-slots?date=' + date + '&court_id=' + courtId)
-    const data = await res.json()
-    booked_slots = data.bookedSlots || []
-    selected_slots = []
-    buildSlots()
-    updateSummary()
-  }
-
-  function submitBooking() {
-    if (!selected_slots.length) return alert('กรุณาเลือกเวลา')
-    // TODO: submit logic
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    buildSlots()
-    updateSummary()
-  })
-</script>
 
 @end

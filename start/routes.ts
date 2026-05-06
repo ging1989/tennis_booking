@@ -21,3 +21,7 @@ router.get('/court', [CourtsController, 'index']).as('courts')
 router.get('/booking', [BookingsController, 'index']).as('bookings')
 
 router.get('/api/available-slots', [BookingsController, 'availableSlots'])
+
+router.get('/booking/details', [BookingsController, 'details'])
+
+router.post('/booking/store', [BookingsController, 'store']).as('booking_store')

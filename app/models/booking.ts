@@ -6,13 +6,43 @@ export default class Booking extends BaseModel {
   declare id: number
 
   @column()
+  declare bookingNo: string
+
+  @column()
+  declare customerName: string
+
+  @column()
+  declare customerPhone: string
+
+  @column()
+  declare customerEmail: string
+
+  @column()
+  declare customerType: 'guest' | 'member'
+
+  @column()
   declare courtId: number
+
+  @column()
+  declare userId: number | null
 
   @column()
   declare bookingDate: string
 
   @column()
   declare timeStart: string
+
+  @column()
+  declare timeEnd: string
+
+  @column()
+  declare totalPrice: number
+
+  @column()
+  declare discount: number
+
+  @column()
+  declare status: 'pending' | 'confirmed' | 'cancelled'
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
