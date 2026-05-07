@@ -32,11 +32,17 @@
         <div class="qr-amount">{{ bookingData.total_price }} บาท</div>
     </div>
 
+    @if(flashMessages.has('error'))
+      <div class="ui negative message">
+        <p>{{ flashMessages.get('error') }}</p>
+      </div>
+    @end
+
     <form action="/booking/store" method="post" enctype="multipart/form-data">
         {{ csrfField() }}
         <div class="booking-field">
             <label>อัพโหลดสลิป</label>
-            <input type="file" name="payment_slip" accept="image/*,.pdf" required>
+            <input type="file" name="payment_slip" accept="image/*" required>
         </div>
         <div class="details-actions">
             <a href="javascript:history.back()" class="back-btn">Back</a>

@@ -1,5 +1,5 @@
 
-const PRICE_PER_SLOT = 300
+const DEFAULT_PRICE_PER_SLOT = 0
 const MAX_SLOTS = 3
 
 const allSlots = [
@@ -69,17 +69,17 @@ function createBookingPage(page) {
   const courtSelect = document.getElementById('court-select')
   const continueButton = document.getElementById('continue-booking')
   const courtInfoName = document.querySelector('.court-info-name')
-
   if (!grid || !bookingDate || !courtSelect || !continueButton) return
 
   let currentCourtName = page.dataset.courtName || ''
+  let currentPricePerSlot = Number(page.dataset.courtPrice || DEFAULT_PRICE_PER_SLOT)
   let bookedSlots = parseBookedSlots(page.dataset.bookedSlots)
   let selectedSlots = []
 
   function updateSummary() {
     const sortedSlots = [...selectedSlots].sort((a, b) => slotToMinutes(a) - slotToMinutes(b))
     const slotCount = sortedSlots.length
-    const fee = slotCount * PRICE_PER_SLOT
+    const fee = slotCount * currentPricePerSlot
 
     document.getElementById('selected-label').textContent = slotCount ? sortedSlots.join(', ') : 'none'
     document.getElementById('sum-court').textContent = currentCourtName || '-'
@@ -137,7 +137,11 @@ function createBookingPage(page) {
     const selectedOption = courtSelect.options[courtSelect.selectedIndex]
 
     currentCourtName = courtId ? selectedOption.text : ''
+    currentPricePerSlot = courtId ? Number(selectedOption.dataset.price || DEFAULT_PRICE_PER_SLOT) : DEFAULT_PRICE_PER_SLOT
     if (courtInfoName) courtInfoName.textContent = currentCourtName
+    
+    const courtInfoDetail = document.querySelector('.court-info-detail')
+    if (courtInfoDetail) courtInfoDetail.textContent = courtId ? `฿${currentPricePerSlot}/hr` : '-'
 
     const params = new URLSearchParams({
       date: bookingDate.value,
@@ -168,6 +172,11 @@ function createBookingPage(page) {
   })
 
   continueButton.addEventListener('click', () => {
+    if (!courtSelect.value) {
+      window.alert('กรุณาเลือกสนาม')
+      return
+    }
+
     if (!selectedSlots.length) {
       window.alert('กรุณาเลือกเวลา')
       return

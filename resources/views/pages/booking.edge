@@ -23,6 +23,7 @@
   class="booking-layout"
   id="booking-page"
   data-court-name="{{ court ? court.courtName : '' }}"
+  data-court-price="{{ court ? court.pricePerHour : 0}}"
   data-booked-slots='{{{ bookedSlotsJson || "[]" }}}'
 >
 
@@ -35,7 +36,7 @@
     <div class="court-info-card">
       <div class="court-info-text">
         <div class="court-info-name">{{ court ? court.courtName : '' }}</div>
-        <div class="court-info-detail">฿300/hr</div>
+        <div class="court-info-detail">{{ court ? '฿' + court.pricePerHour + '/hr' : '-' }}</div>
       </div>
     </div>
 
@@ -51,7 +52,7 @@
       <select class="ui dropdown" id="court-select">
         <option value="">เลือกสนาม</option>
         @each(c in courts)
-          <option value="{{ c.id }}" {{ court && court.id === c.id ? 'selected' : '' }}>{{ c.courtName }}</option>
+          <option value="{{ c.id }}" data-price="{{ c.pricePerHour }}" {{court && court.id === c.id? 'selected' : ''}}>{{ c.courtName }}</option>
         @end
       </select>
     </div>

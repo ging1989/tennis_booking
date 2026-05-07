@@ -28,14 +28,11 @@
         <h2>ข้อมูลของคุณ</h2>
         <p class="booking-subtitle">ไม่จำเป็นต้องมีบัญชี</p>
 
-        <form action="/booking/store" method="POST">
+        <form action="/booking/payment-init" method="POST">
           {{ csrfField() }}
           <input type="hidden" name="court_id" value="{{ courtId }}">
           <input type="hidden" name="booking_date" value="{{ bookingDate }}">
-          <input type="hidden" name="time_start" value="{{ timeStart }}">
-          <input type="hidden" name="time_end" value="{{ timeEnd }}">
-          <input type="hidden" name="total_price" value="{{ totalPrice }}">
-          <input type="hidden" name="booking_no" value="{{ bookingNo }}">
+          <input type="hidden" name="slots" value="{{ slotArr.join(',') }}">
           <input type="hidden" name="customer_type" value="guest">
 
           <div class="booking-field">
