@@ -7,7 +7,7 @@ export const storeBookingValidator = vine.compile(vine.object({
     customer_email: vine.string().trim().email(),
     customer_type: vine.enum(['guest', 'member']),
     court_id: vine.number().positive(),
-    booking_date: vine.date({formats: ['YYYY-MM-DD']}),
+    booking_date: vine.string().trim(),
     time_start: vine.string().trim(),
     time_end: vine.string().trim(),
     total_price: vine.number().positive(),

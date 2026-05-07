@@ -28,8 +28,8 @@
 
   <!-- Left: Time Slot Selection -->
   <div class="booking-main">
-    <h2>Select time slots</h2>
-    <p class="booking-subtitle">Choose up to 3 consecutive slots</p>
+    <h2>เลือกช่วงเวลา</h2>
+    <!-- <p class="booking-subtitle">Choose up to 3 consecutive slots</p> -->
 
     <!-- Court Info -->
     <div class="court-info-card">
@@ -41,7 +41,7 @@
 
     <!-- Date -->
     <div class="booking-field">
-      <label>Date</label>
+      <label>วันที่เข้าใช้บริการ</label>
       <input type="date" id="booking-date" value="{{ bookingDate || '' }}">
     </div>
 
@@ -57,24 +57,24 @@
     </div>
 
     <!-- Slot Status -->
-    <div class="slot-status">Selected: <span id="selected-label">none</span> — Max 3 consecutive slots</div>
+    <div class="slot-status">เลือกแล้ว: <span id="selected-label">none</span> - เลือกได้สูงสุด 3 ช่วงเวลาติดต่อกัน</div>
 
     <!-- Slot Grid -->
     <div id="slot-grid" class="slot-grid"></div>
 
     <!-- Continue Button -->
-    <button class="continue-btn" id="continue-booking">Continue →</button>
+    <button class="continue-btn" id="continue-booking">ดำเนินการต่อ →</button>
   </div>
 
   <!-- Right: Booking Summary -->
   <div class="booking-summary">
-    <h3>Booking summary</h3>
-    <div class="summary-row"><span>Court</span><span id="sum-court">-</span></div>
-    <div class="summary-row"><span>Date</span><span id="sum-date">-</span></div>
-    <div class="summary-row"><span>Time</span><span id="sum-time">-</span></div>
-    <div class="summary-row"><span>Duration</span><span id="sum-duration">-</span></div>
-    <div class="summary-row"><span>Court fee</span><span id="sum-fee">-</span></div>
-    <div class="summary-total">Total: <span id="sum-total">฿0</span></div>
+    <h3>รายละเอียดการจอง</h3>
+    <div class="summary-row"><span>สนาม</span><span id="sum-court">-</span></div>
+    <div class="summary-row"><span>วันที่</span><span id="sum-date">-</span></div>
+    <div class="summary-row"><span>เวลา</span><span id="sum-time">-</span></div>
+    <div class="summary-row"><span>ระยะเวลาการจอง</span><span id="sum-duration">-</span></div>
+    <div class="summary-row"><span>ค่าบริการสนาม</span><span id="sum-fee">-</span></div>
+    <div class="summary-total">ยอดรวมทั้งหมด: <span id="sum-total">฿0</span></div>
   </div>
 
 </div>

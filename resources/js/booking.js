@@ -1,3 +1,4 @@
+
 const PRICE_PER_SLOT = 300
 const MAX_SLOTS = 3
 
@@ -119,10 +120,13 @@ function createBookingPage(page) {
     } else {
       const nextSelectedSlots = [...selectedSlots, time]
 
-      if (nextSelectedSlots.length > MAX_SLOTS) return
-      if (!isConsecutive(nextSelectedSlots)) return
-
-      selectedSlots.push(time)
+      if (!isConsecutive(nextSelectedSlots)) {
+        selectedSlots = [time]
+      } else if (nextSelectedSlots.length > MAX_SLOTS) {
+        return
+      } else {
+        selectedSlots.push(time)
+      }
     }
 
     buildSlots()
@@ -166,6 +170,7 @@ function createBookingPage(page) {
   continueButton.addEventListener('click', () => {
     if (!selectedSlots.length) {
       window.alert('กรุณาเลือกเวลา')
+      return
     }
 
     const params = new URLSearchParams({
@@ -177,9 +182,22 @@ function createBookingPage(page) {
     window.location.href = `/booking/details?${params}`
   })
 
-  buildSlots()
-  updateSummary()
-}
+  const urlParams = new URLSearchParams(window.location.search)
+  const preselectedTime = urlParams.get('time')
+
+  if (courtSelect.value) {
+    onCourtChange(courtSelect.value).then(() => {
+      if (preselectedTime && allSlots.includes(preselectedTime) && !bookedSlots.includes(preselectedTime)) {
+        selectedSlots = [preselectedTime]
+        buildSlots()
+        updateSummary()
+      }
+    })
+  } else {
+      buildSlots()
+      updateSummary()
+    }
+  }
 
 document.addEventListener('DOMContentLoaded', () => {
   const bookingPage = document.getElementById('booking-page')

@@ -1,10 +1,11 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Court from '#models/court'
 import Booking from '#models/booking'
+import app from '@adonisjs/core/services/app'
 import { storeBookingValidator } from '#validators/booking_validator'
 
 export default class BookingsController {
-    async index({view, request}: HttpContext) {
+    async index({ view, request}: HttpContext) {
         const courts = await Court.query().orderBy('court_name', 'asc')
         const courtId = request.input('court')
         const court = courtId ? await Court.find(courtId) : null
@@ -13,7 +14,7 @@ export default class BookingsController {
     }
 
 
-    async availableSlots({request, response}: HttpContext) {
+    async availableSlots({ request, response }: HttpContext) {
         const date = request.input('date')
         const courtId = request.input('court_id')
 
@@ -30,7 +31,7 @@ export default class BookingsController {
         return response.json({bookedSlots})
     }
 
-    async details({view, request}: HttpContext) {
+    async details({ view, request }: HttpContext) {
         const courtId = request.input('court_id')
         const bookingDate = request.input('date')
         const slots = request.input('slots')
@@ -50,11 +51,52 @@ export default class BookingsController {
             court, courtId, bookingDate, slotArr, timeStart, timeEnd, totalPrice, bookingNo})
     }
 
-    async store({request, response}: HttpContext) {
-        const data = await request.validateUsing(storeBookingValidator)
-        await Booking.create(data)
-        
+    async store({ request, response, session }: HttpContext) {
+        //const data = await request.validateUsing(storeBookingValidator)
+        //await Booking.create(data)
+        //return response.redirect('/booking')
+
+        const bookingData = session.get('booking_data')
+        if (!bookingData)
+            return response.redirect('/booking')
+
+        const slip = request.file('payment_slip', {
+            size: '5mb',
+            extnames: ['jpg', 'jpeg', 'png']
+        })
+
+        let slipPath: string | null = null
+        if (slip) {
+            await slip.move(app.publicPath('uploads/slips'))
+            slipPath = `uploads/slips/${slip.fileName}`
+        }
+
+        await Booking.create({
+            ...bookingData,
+            paymentSlip: slipPath,
+            status: 'pending',
+        })
+
+        session.forget('booking_data')
         return response.redirect('/booking')
     }
+
+    async paymentInit({ request, response, session}: HttpContext) {
+        const data = await request.validateUsing(storeBookingValidator)
+        session.put('booking_data', data)
+
+        return response.redirect('/booking/payment')
+    }
+
+    async payment({ view, session, response }: HttpContext) {
+        const bookingData = session.get('booking_data')
+        if (!bookingData)
+            return response.redirect('/booking')
+
+        const court = await Court.find(bookingData.court_id)
+
+        return view.render('page/booking_payment', {bookingData, court})
+    }
+
 
 }

@@ -44,6 +44,9 @@ export default class Booking extends BaseModel {
   @column()
   declare status: 'pending' | 'confirmed' | 'cancelled'
 
+  @column()
+  declare paymentSlip: string | null
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

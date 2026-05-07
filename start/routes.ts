@@ -25,3 +25,7 @@ router.get('/api/available-slots', [BookingsController, 'availableSlots'])
 router.get('/booking/details', [BookingsController, 'details'])
 
 router.post('/booking/store', [BookingsController, 'store']).as('booking_store')
+
+router.post('/booking/payment-init', [BookingsController, 'paymentInit'])
+
+router.get('/booking/payment', [BookingsController, 'payment'])
