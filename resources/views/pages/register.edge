@@ -1,0 +1,36 @@
+@layouts.master({title: 'Register'})
+
+<div class="booking-layout centered login-layout">
+    <div class="booking-main">
+        <h2>สมัครสมาชิก</h2>
+        <p class="booking-subtitle">สร้างบัญชีผู้ใช้งานใหม่</p>
+
+        <form action="/register" method="post">
+            {{ csrfField() }}
+
+            <div class="booking-field">
+                <label>ชื่อ-นามสกุล</label>
+                <input type="text" name="full_name" placeholder="กรอกชื่อ-นามสกุล">
+            </div>
+
+            <div class="booking-field">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="email@example.com" required>
+            </div>
+
+            <div class="booking-field">
+                <label>รหัสผ่าน</label>
+                <input type="password" name="password" placeholder="อย่างน้อย 8 ตัวอักษร" required>
+            </div>
+
+            <div class="booking-field">
+                <label>ยืนยันรหัสผ่าน</label>
+                <input type="password" name="password_confirmation" placeholder="กรอกรหัสผ่านอีกครั้ง" required>
+            </div>
+
+            <button class="continue-btn" type="submit">สมัครสมาชิก</button>
+        </form>
+    </div>
+</div>
+    
+@end

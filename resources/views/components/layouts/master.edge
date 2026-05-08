@@ -15,7 +15,9 @@
 
     @include('partials/navbar')
 
-    {{{ await $slots.main() }}}
+    <main class="page-content">
+        {{{ await $slots.main() }}}
+    </main>
 
     @if(!hideFooter) 
         <div class="footer">
