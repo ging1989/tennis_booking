@@ -6,63 +6,64 @@
     <div class="step-circle">1</div>
     <div class="step-label">ช่วงเวลา</div>
   </div>
-
   <div class="step-line"></div>
-
   <div class="step">
     <div class="step-circle">2</div>
     <div class="step-label">รายละเอียด</div>
   </div>
-
   <div class="step-line"></div>
-
   <div class="step active">
     <div class="step-circle">3</div>
     <div class="step-label">ชำระเงิน</div>
   </div>
 </div>
 
-<div class="booking-layout">
-    <div class="booking-main">
+<div class="booking-layout centered">
+  <div class="booking-main">
     <h2>ชำระเงิน</h2>
-    <p class="booking-subtitle">สแกน QR Code แล้วอัพโหลดสลิปเพื่อยืนยันการโอนเงิน</p>
-
-    <div class="qr-section">
-        <img src="/images/thaiqr.png" alt="QR Code" class="qr-image">
-        <div class="qr-amount">{{ bookingData.total_price }} บาท</div>
-    </div>
-
-    @if(flashMessages.has('error'))
-      <div class="ui negative message">
-        <p>{{ flashMessages.get('error') }}</p>
-      </div>
-    @end
+    <p class="booking-subtitle">สแกน QR Code เพื่อชำระเงิน</p>
 
     <form action="/booking/store" method="post" enctype="multipart/form-data">
-        {{ csrfField() }}
-        <div class="booking-field">
-            <label>อัพโหลดสลิป</label>
-            <input type="file" name="payment_slip" accept="image/*" required>
+      {{ csrfField() }}
+
+      <div class="payment-row">
+        <div class="qr-section">
+          <img src="/images/thaiqr.png" alt="QR Code" class="qr-image">
         </div>
-        <div class="details-actions">
-            <a href="javascript:history.back()" class="back-btn">Back</a>
-            <button class="continue-btn" type="submit">ยืนยันการจอง</button>
+
+        <div class="payment-right">
+          <div class="payment-info">
+            <div class="summary-row"><span>สนาม</span><span>{{ court ? court.courtName : '-' }}</span></div>
+            <div class="summary-row"><span>วันที่</span><span>{{ bookingData.booking_date }}</span></div>
+            <div class="summary-row"><span>เวลา</span><span>{{ bookingData.time_start }} - {{ bookingData.time_end }}</span></div>
+            <div class="summary-row"><span><b>ยอดชำระ</b></span><span><b>{{ bookingData.total_price }}</b></span></div>
+          </div>
+
+          <div class="booking-field payment-slip-field">
+            <label for="payment_slip" class="upload-box">
+              <span class="upload-title">อัพโหลดสลิป</span>
+              <span class="upload-hint">เลือกไฟล์ JPG หรือ PNG ขนาดไม่เกิน 5mb</span>
+            </label>
+            <input id="payment_slip" type="file" name="payment_slip" accept="image/*" required hidden>
+          </div>
+
+          @if(flashMessages.has('error')) 
+            <div class="ui negative message">
+              <p>{{ flashMessages.get('error') }}</p>
+            </div>
+          @end
+
         </div>
+      </div>
+
+      <div class="details-actions">
+        <a href="javascript:history.back()" class="back-btn">Back</a>
+        <button class="continue-btn" type="submit">ยืนยันการจอง</button>
+      </div>
+
+
     </form>
-
-</div>
-
-    <div class="booking-summary">
-        <h3>รายละเอียดการจอง</h3>
-        <div class="summary-row"><span>สนาม</span><span>{{ court ? court.courtName : '-' }}</span></div>
-        <div class="summary-row"><span>วันที่</span><span>{{ bookingData.booking_date }}</span></div>
-        <div class="summary-row"><span>เวลา</span><span>{{ bookingData.time_start }} – {{ bookingData.time_end }}</span></div>
-        <div class="summary-row"><span>ชื่อผู้จอง</span><span>{{ bookingData.customer_name }}</span></div>
-        <div class="summary-row"><span>เบอร์โทร</span><span>{{ bookingData.customer_phone }}</span></div>
-        <div class="summary-total">Total: <span>฿{{ bookingData.total_price }}</span></div>
-
-    </div>
+  </div>
 </div>
 
 @end
-
