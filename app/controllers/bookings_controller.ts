@@ -115,7 +115,7 @@ export default class BookingsController {
     return response.json({ bookedSlots })
   }
 
-  async details({ view, request, response }: HttpContext) {
+  async details({ view, request, response, session }: HttpContext) {
     const courtId = request.input('court_id')
     const bookingDate = request.input('date')
     const slots = request.input('slots') as string | undefined
@@ -151,6 +151,7 @@ export default class BookingsController {
       timeEnd,
       totalPrice,
       bookingNo,
+      sessionUser: session.get('user') ?? null,
     })
   }
 

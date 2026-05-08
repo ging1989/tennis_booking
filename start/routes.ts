@@ -21,6 +21,8 @@ router.get('/login', [AuthController, 'showLogin']).as('login')
 
 router.post('/login', [AuthController, 'login'])
 
+router.get('/logout', [AuthController, 'logout'])
+
 router.get('/register', [AuthController, 'showRegister']).as('register')
 
 router.post('/register', [AuthController, 'register'])

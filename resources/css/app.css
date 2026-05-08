@@ -791,6 +791,10 @@ select,
   white-space: nowrap;
 }
 
+i.icon {
+    font-family: Icons !important;
+}
+
 
 
 

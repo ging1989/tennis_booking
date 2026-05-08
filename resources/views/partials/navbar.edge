@@ -13,8 +13,18 @@
 
         <!-- Right Menu -->
         <div class="right menu">
-            <a href="/login" class="item">เข้าสู่ระบบ</a>
-            <a href="/register" class="ui primary button item">สมัครสมาชิก</a>
+            @if(sessionUser) 
+                <div class="ui dropdown item">
+                    {{ sessionUser.fullName }}
+                    <i class="dropdown icon"></i>
+                    <div class="right menu">
+                        <a href="/logout" class="item">ออกจากระบบ</a>
+                    </div>
+                </div>
+            @else
+                <a href="/login" class="item">เข้าสู่ระบบ</a>
+                <a href="/register" class="ui primary button item">สมัครสมาชิก</a>
+            @end
         </div>
         
         {{--

@@ -26,36 +26,38 @@
 
     <div class="booking-main">
         <h2>ข้อมูลของคุณ</h2>
-        <p class="booking-subtitle">ไม่จำเป็นต้องมีบัญชี</p>
+        
+        <p class="booking-subtitle">{{ sessionUser ? 'ข้อมูลของสมาชิก' : 'ไม่จำเป็นต้องมีบัญชี' }}</p>
+        
 
         <form action="/booking/payment-init" method="POST">
           {{ csrfField() }}
           <input type="hidden" name="court_id" value="{{ courtId }}">
           <input type="hidden" name="booking_date" value="{{ bookingDate }}">
           <input type="hidden" name="slots" value="{{ slotArr.join(',') }}">
-          <input type="hidden" name="customer_type" value="guest">
+          <input type="hidden" name="customer_type" value="{{ sessionUser ? 'member' : 'guest' }}">
 
           <div class="booking-field">
             <label>ชื่อ-นามสกุล</label>
-            <input type="text" name="customer_name" placeholder="Enter your full name" required>
+            <input type="text" name="customer_name" value="{{ sessionUser ? sessionUser.fullName : '' }}" placeholder="Enter your fullname" required>
           </div>
 
           <div class="booking-field-row">
             <div class="booking-field">
               <label>เบอร์โทรศัพท์</label>
-              <input type="text" name="customer_phone" placeholder="0812345678" required>
+              <input type="text" name="customer_phone" value="{{ sessionUser ? sessionUser.phone : ''}}" placeholder="0812345678" required>
             </div>
             
             <div class="booking-field">
               <label>Email</label>
-              <input type="text" name="customer_email" placeholder="email@example.com" required>
+              <input type="text" name="customer_email" value="{{ sessionUser ? sessionUser.email : '' }}" placeholder="email@example.com" required>
             </div>
           </div>
 
-
-          <div class="details-divider"><span>or</span></div>
-
-          <a href="/login" class="member-login-btn">เข้าสู่ระบบเพื่อรับสิทธิ์ส่วนลดสมาชิก</a>
+          @if(!sessionUser)
+            <div class="details-divider"><span>or</span></div>
+            <a href="/login" class="member-login-btn">เข้าสู่ระบบเพื่อรับสิทธิ์ส่วนลดสมาชิก</a>
+          @end          
 
           <div class="details-actions">
             <a href="javascript:history.back()" class="back-btn">← ย้อนกลับ</a>

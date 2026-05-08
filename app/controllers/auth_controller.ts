@@ -49,7 +49,19 @@ export default class AuthController {
             return response.redirect().back()
         }
 
-        session.put('user', { id: user.id, fullName: user.fullName, role: user.role})
+        session.put('user', { 
+            id: user.id, 
+            fullName: user.fullName, 
+            email: user.email,
+            phone: user.phone,
+            role: user.role
+        })
+
+        return response.redirect().toRoute('home')
+    }
+
+    async logout({ session, response }: HttpContext) {
+        session.forget('user')
 
         return response.redirect().toRoute('home')
     }
