@@ -12,9 +12,12 @@ import router from '@adonisjs/core/services/router'
 const HomeController = () => import('#controllers/home_controller')
 const CourtsController = () => import('#controllers/courts_controller')
 const BookingsController =() => import('#controllers/bookings_controller')
+const AuthController =() => import('#controllers/auth_controller')
 
 
 router.get('/', [HomeController, 'index']).as('home')
+
+router.get('/login', [AuthController, 'showLogin']).as('login')
 
 router.get('/court', [CourtsController, 'index']).as('courts')
 

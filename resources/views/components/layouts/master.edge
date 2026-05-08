@@ -17,13 +17,14 @@
 
     {{{ await $slots.main() }}}
 
-    <!-- Footer -->
-    <div class="footer">
-        <div class="ui container">
-            <p><b>Urban Tennis Club</b> · โทร 02-xxx-xxxx · เปิดทุกวัน 07:00 - 23:00 น.</p>
-            <p>© 2026 Urban Tennis Club. All rights reserved.  </p>
-        </div>  
-    </div>
+    @if(!hideFooter) 
+        <div class="footer">
+            <div class="ui container">
+                <p><b>Urban Tennis Club</b> · โทร 02-xxx-xxxx · เปิดทุกวัน 07:00 - 23:00 น.</p>
+                <p>© 2026 Urban Tennis Club. All rights reserved.</p>
+            </div>
+        </div>
+    @end
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
