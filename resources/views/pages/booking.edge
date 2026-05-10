@@ -1,6 +1,5 @@
 @layouts.master({title: 'Book a court'})
 
-<!-- Progress Stepper -->
 <div class="booking-stepper">
   <div class="step active">
     <div class="step-circle">1</div>
@@ -18,21 +17,16 @@
   </div>
 </div>
 
-<!-- Main Layout -->
 <div
   class="booking-layout"
   id="booking-page"
   data-court-name="{{ court ? court.courtName : '' }}"
-  data-court-price="{{ court ? court.pricePerHour : 0}}"
+  data-court-price="{{ court ? court.pricePerHour : 0 }}"
   data-booked-slots='{{{ bookedSlotsJson || "[]" }}}'
 >
-
-  <!-- Left: Time Slot Selection -->
   <div class="booking-main">
     <h2>เลือกช่วงเวลา</h2>
-    <!-- <p class="booking-subtitle">Choose up to 3 consecutive slots</p> -->
 
-    <!-- Court Info -->
     <div class="court-info-card">
       <div class="court-info-text">
         <div class="court-info-name">{{ court ? court.courtName : '' }}</div>
@@ -40,36 +34,40 @@
       </div>
     </div>
 
-    <!-- Date -->
     <div class="booking-field">
       <label>วันที่เข้าใช้บริการ</label>
       <input type="date" id="booking-date" value="{{ bookingDate || '' }}">
     </div>
 
-    <!-- Court Select -->
     <div class="booking-field">
       <label>เลือกสนาม</label>
+
       <select class="ui dropdown" id="court-select">
         <option value="">เลือกสนาม</option>
+
         @each(c in courts)
-          <option value="{{ c.id }}" data-price="{{ c.pricePerHour }}" {{court && court.id === c.id? 'selected' : ''}}>{{ c.courtName }}</option>
+          <option
+            value="{{ c.id }}"
+            data-price="{{ c.pricePerHour }}"
+            {{ court && court.id === c.id ? 'selected' : '' }}
+          >
+            {{ c.courtName }}
+          </option>
         @end
       </select>
     </div>
 
-    <!-- Slot Status -->
-    <div class="slot-status">เลือกแล้ว: <span id="selected-label">none</span> - เลือกได้สูงสุด 3 ช่วงเวลาติดต่อกัน</div>
-
-    <!-- Slot Grid -->
+    <div class="slot-status">
+      เลือกแล้ว: <span id="selected-label">none</span> - เลือกได้สูงสุด 3 ช่วงเวลาติดต่อกัน
+    </div>
     <div id="slot-grid" class="slot-grid"></div>
 
-    <!-- Continue Button -->
     <button class="continue-btn" id="continue-booking">ดำเนินการต่อ →</button>
   </div>
 
-  <!-- Right: Booking Summary -->
   <div class="booking-summary">
     <h3>รายละเอียดการจอง</h3>
+
     <div class="summary-row"><span>สนาม</span><span id="sum-court">-</span></div>
     <div class="summary-row"><span>วันที่</span><span id="sum-date">-</span></div>
     <div class="summary-row"><span>เวลา</span><span id="sum-time">-</span></div>
@@ -77,7 +75,6 @@
     <div class="summary-row"><span>ค่าบริการสนาม</span><span id="sum-fee">-</span></div>
     <div class="summary-total">ยอดรวมทั้งหมด: <span id="sum-total">฿0</span></div>
   </div>
-
 </div>
 
 @end

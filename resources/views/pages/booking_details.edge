@@ -1,6 +1,5 @@
 @layouts.master({title: 'Booking Details'})
 
-<!-- Progress Stepper -->
 <div class="booking-stepper">
   <div class="step">
     <div class="step-circle">1</div>
@@ -23,59 +22,74 @@
 </div>
 
 <div class="booking-layout">
+  <div class="booking-main">
+    <h2>ข้อมูลของคุณ</h2>
+    <p class="booking-subtitle">{{ sessionUser ? 'ข้อมูลของสมาชิก' : 'ไม่จำเป็นต้องมีบัญชี' }}</p>
 
-    <div class="booking-main">
-        <h2>ข้อมูลของคุณ</h2>
-        
-        <p class="booking-subtitle">{{ sessionUser ? 'ข้อมูลของสมาชิก' : 'ไม่จำเป็นต้องมีบัญชี' }}</p>
-        
+    <form action="/booking/payment-init" method="POST">
+      {{ csrfField() }}
+      <input type="hidden" name="court_id" value="{{ courtId }}">
+      <input type="hidden" name="booking_date" value="{{ bookingDate }}">
+      <input type="hidden" name="slots" value="{{ slotArr.join(',') }}">
+      <input type="hidden" name="customer_type" value="{{ sessionUser ? 'member' : 'guest' }}">
 
-        <form action="/booking/payment-init" method="POST">
-          {{ csrfField() }}
-          <input type="hidden" name="court_id" value="{{ courtId }}">
-          <input type="hidden" name="booking_date" value="{{ bookingDate }}">
-          <input type="hidden" name="slots" value="{{ slotArr.join(',') }}">
-          <input type="hidden" name="customer_type" value="{{ sessionUser ? 'member' : 'guest' }}">
+      <div class="booking-field">
+        <label>ชื่อ-นามสกุล</label>
+        <input
+          type="text"
+          name="customer_name"
+          value="{{ sessionUser ? sessionUser.fullName : '' }}"
+          placeholder="Enter your fullname"
+          required
+        >
+      </div>
 
-          <div class="booking-field">
-            <label>ชื่อ-นามสกุล</label>
-            <input type="text" name="customer_name" value="{{ sessionUser ? sessionUser.fullName : '' }}" placeholder="Enter your fullname" required>
-          </div>
+      <div class="booking-field-row">
+        <div class="booking-field">
+          <label>เบอร์โทรศัพท์</label>
+          <input
+            type="text"
+            name="customer_phone"
+            value="{{ sessionUser ? sessionUser.phone : '' }}"
+            placeholder="0812345678"
+            required
+          >
+        </div>
 
-          <div class="booking-field-row">
-            <div class="booking-field">
-              <label>เบอร์โทรศัพท์</label>
-              <input type="text" name="customer_phone" value="{{ sessionUser ? sessionUser.phone : ''}}" placeholder="0812345678" required>
-            </div>
-            
-            <div class="booking-field">
-              <label>Email</label>
-              <input type="text" name="customer_email" value="{{ sessionUser ? sessionUser.email : '' }}" placeholder="email@example.com" required>
-            </div>
-          </div>
+        <div class="booking-field">
+          <label>Email</label>
+          <input
+            type="text"
+            name="customer_email"
+            value="{{ sessionUser ? sessionUser.email : '' }}"
+            placeholder="email@example.com"
+            required
+          >
+        </div>
+      </div>
 
-          @if(!sessionUser)
-            <div class="details-divider"><span>or</span></div>
-            <a href="/login" class="member-login-btn">เข้าสู่ระบบเพื่อรับสิทธิ์ส่วนลดสมาชิก</a>
-          @end          
+      @if(!sessionUser)
+        <div class="details-divider"><span>or</span></div>
+        <a href="/login" class="member-login-btn">เข้าสู่ระบบเพื่อรับสิทธิ์ส่วนลดสมาชิก</a>
+      @end
 
-          <div class="details-actions">
-            <a href="javascript:history.back()" class="back-btn">← ย้อนกลับ</a>
-            <button class="continue-btn" type="submit">ไปยังหน้าชำระเงิน →</button>
-          </div>
-        </form>
-    </div>
+      <div class="details-actions">
+        <a href="javascript:history.back()" class="back-btn">← ย้อนกลับ</a>
+        <button class="continue-btn" type="submit">ไปยังหน้าชำระเงิน →</button>
+      </div>
+    </form>
+  </div>
 
-      <!-- Right: Booking Summary -->
-    <div class="booking-summary">
-      <h3>รายละเอียดการจอง</h3>
-      <div class="summary-row"><span>สนาม</span><span>{{ court ? court.courtName : '-' }}</span></div>
-      <div class="summary-row"><span>วันที่</span><span>{{ bookingDate ?? '-' }}</span></div>
-      <div class="summary-row"><span>เวลา</span><span>{{ timeStart && timeEnd ? timeStart + '-' + timeEnd: '-' }}</span></div>
-      <div class="summary-row"><span>ระยะเวลาการจอง</span><span>{{ slotArr.length ? slotArr.length + ' hr' : '-' }}</span></div>
-      <div class="summary-row"><span>ค่าบริการสนาม</span><span>{{ totalPrice ? '฿' + totalPrice : '-' }}</span></div>
-      <div class="summary-total">ยอดรวมทั้งหมด: <span>฿{{ totalPrice ?? 0 }}</span></div>
-    </div>
+  <div class="booking-summary">
+    <h3>รายละเอียดการจอง</h3>
+
+    <div class="summary-row"><span>สนาม</span><span>{{ court ? court.courtName : '-' }}</span></div>
+    <div class="summary-row"><span>วันที่</span><span>{{ bookingDate ?? '-' }}</span></div>
+    <div class="summary-row"><span>เวลา</span><span>{{ timeStart && timeEnd ? timeStart + '-' + timeEnd : '-' }}</span></div>
+    <div class="summary-row"><span>ระยะเวลาการจอง</span><span>{{ slotArr.length ? slotArr.length + ' hr' : '-' }}</span></div>
+    <div class="summary-row"><span>ค่าบริการสนาม</span><span>{{ totalPrice ? '฿' + totalPrice : '-' }}</span></div>
+    <div class="summary-total">ยอดรวมทั้งหมด: <span>฿{{ totalPrice ?? 0 }}</span></div>
+  </div>
 </div>
-    
+
 @end

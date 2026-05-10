@@ -10,6 +10,20 @@ const MAX_SLOTS = 3
 const BOOKING_START_HOUR = 7
 const BOOKING_END_HOUR = 22
 
+type BookingData = {
+  booking_no: string
+  customer_name: string
+  customer_phone: string
+  customer_email: string
+  customer_type: 'guest' | 'member'
+  court_id: number
+  booking_date: string
+  time_start: string
+  time_end: string
+  total_price: number
+  discount: number
+}
+
 function slotToMinutes(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
   return hours * 60 + minutes
@@ -69,12 +83,13 @@ function expandBookedSlots(bookings: Booking[]) {
 }
 
 function createBookingSlots(timeStart: string, timeEnd: string) {
-  return parseSlots(
-    Array.from({ length: (slotToMinutes(timeEnd) - slotToMinutes(timeStart)) / 60 }, (_, index) => {
-      const hour = Number(timeStart.substring(0, 2)) + index
-      return `${String(hour).padStart(2, '0')}:00`
-    }).join(',')
-  )
+  const slotCount = (slotToMinutes(timeEnd) - slotToMinutes(timeStart)) / 60
+  const startHour = Number(timeStart.substring(0, 2))
+
+  return Array.from({ length: slotCount }, (_, index) => {
+    const hour = startHour + index
+    return `${String(hour).padStart(2, '0')}:00`
+  })
 }
 
 function isDuplicateSlotError(error: unknown) {
@@ -82,6 +97,52 @@ function isDuplicateSlotError(error: unknown) {
 
   const dbError = error as { code?: string; errno?: number }
   return dbError.code === 'ER_DUP_ENTRY' || dbError.errno === 1062
+}
+
+function createBookingNo(date: string) {
+  const dateText = date.replace(/-/g, '')
+  const randomText = Math.random().toString(36).substring(2, 6).toUpperCase()
+
+  return `BK-${dateText}-${randomText}`
+}
+
+function getSelectedTime(slots: string[]) {
+  const firstSlot = slots[0]
+  const lastSlot = slots[slots.length - 1]
+
+  return {
+    timeStart: firstSlot,
+    timeEnd: nextHour(lastSlot),
+  }
+}
+
+function slotsAreReady(slots: string[]) {
+  return (
+    slots.length > 0 &&
+    slots.length <= MAX_SLOTS &&
+    slots.every(isValidSlot) &&
+    isConsecutive(slots)
+  )
+}
+
+async function getBookedSlots(bookingDate: string, courtId: number | string) {
+  const bookings = await Booking.query()
+    .where('booking_date', bookingDate)
+    .where('court_id', courtId)
+    .whereNot('status', 'cancelled')
+
+  return expandBookedSlots(bookings)
+}
+
+function hasBookedSlot(selectedSlots: string[], bookedSlots: string[]) {
+  return selectedSlots.some((slot) => bookedSlots.includes(slot))
+}
+
+function getSlipErrorMessage(slip: { errors: { type?: string }[] } | null) {
+  if (!slip) return 'กรุณาแนบสลิปการโอนเงิน'
+  if (slip.errors[0]?.type === 'size') return 'ไฟล์สลิปต้องมีขนาดไม่เกิน 5mb'
+
+  return 'รองรับเฉพาะไฟล์รูปภาพ (.jpg. .jpeg, .png)'
 }
 
 async function removeUploadedSlip(slipPath: string) {
@@ -105,12 +166,7 @@ export default class BookingsController {
       return response.badRequest({ error: 'date and court id are required' })
     }
 
-    const bookings = await Booking.query()
-      .where('booking_date', date)
-      .where('court_id', courtId)
-      .whereNot('status', 'cancelled')
-
-    const bookedSlots = expandBookedSlots(bookings)
+    const bookedSlots = await getBookedSlots(date, courtId)
 
     return response.json({ bookedSlots })
   }
@@ -123,24 +179,13 @@ export default class BookingsController {
     const court = courtId ? await Court.find(courtId) : null
     const slotArr = parseSlots(slots)
 
-    if (
-      !court ||
-      !bookingDate ||
-      !slotArr.length ||
-      slotArr.length > MAX_SLOTS ||
-      !slotArr.every(isValidSlot) ||
-      !isConsecutive(slotArr)
-    ) {
+    if (!court || !bookingDate || !slotsAreReady(slotArr)) {
       return response.redirect('/booking')
     }
 
-    const timeStart = slotArr[0] ?? ''
-
-    const lastSlot = slotArr[slotArr.length - 1] ?? ''
-    const timeEnd = lastSlot ? nextHour(lastSlot) : ''
-
+    const { timeStart, timeEnd } = getSelectedTime(slotArr)
     const totalPrice = slotArr.length * court.pricePerHour
-    const bookingNo = `BK-${(bookingDate ?? '').replace(/-/g, '')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+    const bookingNo = createBookingNo(bookingDate)
 
     return view.render('pages/booking_details', {
       court,
@@ -165,27 +210,15 @@ export default class BookingsController {
     })
 
     if (!slip || !slip.isValid) {
-      const errorMsg = !slip
-        ? 'กรุณาแนบสลิปการโอนเงิน'
-        : slip.errors[0]?.type === 'size'
-          ? 'ไฟล์สลิปต้องมีขนาดไม่เกิน 5mb'
-          : 'รองรับเฉพาะไฟล์รูปภาพ (.jpg. .jpeg, .png)'
-      session.flash('error', errorMsg)
+      session.flash('error', getSlipErrorMessage(slip))
       return response.redirect('/booking/payment')
     }
 
-    const existingBookings = await Booking.query()
-      .where('booking_date', bookingData.booking_date)
-      .where('court_id', bookingData.court_id)
-      .whereNot('status', 'cancelled')
-
-    const bookedSlots = expandBookedSlots(existingBookings)
-
+    const bookedSlots = await getBookedSlots(bookingData.booking_date, bookingData.court_id)
     const bookingSlots = createBookingSlots(bookingData.time_start, bookingData.time_end)
+    const selectedSlotIsBooked = hasBookedSlot(bookingSlots, bookedSlots)
 
-    const hasBookedSlot = bookingSlots.some((slot) => bookedSlots.includes(slot))
-
-    if (hasBookedSlot) {
+    if (selectedSlotIsBooked) {
       session.flash('error', 'ช่วงเวลาที่เลือกถูกจองไปแล้ว กรุณาเลือกเวลาใหม่')
       session.forget('booking_data')
       return response.redirect(
@@ -240,35 +273,22 @@ export default class BookingsController {
     const court = await Court.find(data.court_id)
     const slotArr = parseSlots(data.slots)
 
-    if (
-      !court ||
-      !slotArr.length ||
-      slotArr.length > MAX_SLOTS ||
-      !slotArr.every(isValidSlot) ||
-      !isConsecutive(slotArr)
-    ) {
+    if (!court || !slotsAreReady(slotArr)) {
       return response.redirect('/booking')
     }
 
-    const bookings = await Booking.query()
-      .where('booking_date', data.booking_date)
-      .where('court_id', data.court_id)
-      .whereNot('status', 'cancelled')
+    const bookedSlots = await getBookedSlots(data.booking_date, data.court_id)
+    const selectedSlotIsBooked = hasBookedSlot(slotArr, bookedSlots)
 
-    const bookedSlots = expandBookedSlots(bookings)
-    const hasBookedSlot = slotArr.some((slot) => bookedSlots.includes(slot))
-
-    if (hasBookedSlot) {
+    if (selectedSlotIsBooked) {
       return response.redirect(`/booking?court=${data.court_id}&date=${data.booking_date}`)
     }
 
-    const timeStart = slotArr[0]
-    const timeEnd = nextHour(slotArr[slotArr.length - 1])
+    const { timeStart, timeEnd } = getSelectedTime(slotArr)
     const totalPrice = slotArr.length * court.pricePerHour
-    const bookingNo = `BK-${data.booking_date.replace(/-/g, '')}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
 
-    session.put('booking_data', {
-      booking_no: bookingNo,
+    const bookingData: BookingData = {
+      booking_no: createBookingNo(data.booking_date),
       customer_name: data.customer_name,
       customer_phone: data.customer_phone,
       customer_email: data.customer_email,
@@ -279,7 +299,9 @@ export default class BookingsController {
       time_end: timeEnd,
       total_price: totalPrice,
       discount: 0,
-    })
+    }
+
+    session.put('booking_data', bookingData)
 
     return response.redirect('/booking/payment')
   }

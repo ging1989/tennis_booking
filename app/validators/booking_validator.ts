@@ -1,6 +1,7 @@
-import vine from "@vinejs/vine";
+import vine from '@vinejs/vine'
 
-export const storeBookingValidator = vine.compile(vine.object({
+export const storeBookingValidator = vine.compile(
+  vine.object({
     customer_name: vine.string().trim(),
     customer_phone: vine.string().trim(),
     customer_email: vine.string().trim().email(),
@@ -8,5 +9,5 @@ export const storeBookingValidator = vine.compile(vine.object({
     court_id: vine.number().positive(),
     booking_date: vine.string().trim(),
     slots: vine.string().trim(),
-})
+  })
 )

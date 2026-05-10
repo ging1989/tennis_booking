@@ -1,41 +1,38 @@
 @layouts.master({title: 'Court'})
 
-    <h2 id="today-header"></h2>
-        
-    
-    <script>
-      const today = new Date();
+<h2 id="today-header"></h2>
 
-      const formattedDate = today.toLocaleDateString('th-TH', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
+<script>
+  const today = new Date()
+  const formattedDate = today.toLocaleDateString('th-TH', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 
-      document.getElementById("today-header").innerText ="ตารางสนามว่าง วันที่ " + formattedDate;
+  document.getElementById('today-header').innerText = 'ตารางสนามว่าง วันที่ ' + formattedDate
+</script>
 
-    </script>
+<div class="ui three stackable cards courts-grid">
+  @each(item in courtSlots)
+    <div class="card court-card">
+      <div class="content">
+        <div class="header">{{ item.court.courtName }}</div>
 
-    <div class="ui three stackable cards courts-grid">
-      @each(item in courtSlots)
-        <div class="card court-card">
-          <div class="content">
-            <div class="header">{{ item.court.courtName }}</div>
-            <div class="slot-grid">
-              @each(slot in item.slots)
-                @if(slot.available)
-                  <a class="slot available" href="/booking?court={{ item.court.id }}&time={{ slot.time }}">
-                    {{ slot.time }}
-                  </a>
-                @else
-                  <span class="slot unavailable">
-                    {{ slot.time }}
-                  </span>
-                @end
-              @end
-            </div>
-          </div>
+        <div class="slot-grid">
+          @each(slot in item.slots)
+            @if(slot.available)
+              <a class="slot available" href="/booking?court={{ item.court.id }}&time={{ slot.time }}">
+                {{ slot.time }}
+              </a>
+            @else
+              <span class="slot unavailable">{{ slot.time }}</span>
+            @end
+          @end
         </div>
-      @end
+      </div>
     </div>
+  @end
+</div>
+
 @end

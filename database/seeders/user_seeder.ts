@@ -19,7 +19,7 @@ export default class extends BaseSeeder {
         phone: '0922239865',
         role: 'member',
         memberType: 'bronze',
-        points: 25
+        points: 25,
       },
       {
         fullName: 'Thakwan Kongrojanakorn',
@@ -38,7 +38,7 @@ export default class extends BaseSeeder {
         role: 'member',
         memberType: 'gold',
         points: 200,
-      }
+      },
     ])
   }
 }

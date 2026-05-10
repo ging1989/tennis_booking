@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
 export default class CourtsController {
-    async index({ view }: HttpContext) {
-        return view.render('pages/court')
-    }
+  async index({ view }: HttpContext) {
+    return view.render('pages/court')
+  }
 }

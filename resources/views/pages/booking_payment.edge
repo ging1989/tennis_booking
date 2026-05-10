@@ -1,6 +1,5 @@
 @layouts.master({title: 'Payment'})
 
-<!-- Progress Stepper -->
 <div class="booking-stepper">
   <div class="step">
     <div class="step-circle">1</div>
@@ -47,12 +46,11 @@
             <input id="payment_slip" type="file" name="payment_slip" accept="image/*" required hidden>
           </div>
 
-          @if(flashMessages.has('error')) 
+          @if(flashMessages.has('error'))
             <div class="ui negative message">
               <p>{{ flashMessages.get('error') }}</p>
             </div>
           @end
-
         </div>
       </div>
 
@@ -60,8 +58,6 @@
         <a href="javascript:history.back()" class="back-btn">Back</a>
         <button class="continue-btn" type="submit">ยืนยันการจอง</button>
       </div>
-
-
     </form>
   </div>
 </div>

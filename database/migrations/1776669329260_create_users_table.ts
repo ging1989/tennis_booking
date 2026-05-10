@@ -11,7 +11,7 @@ export default class extends BaseSchema {
       table.string('password').notNullable()
       table.string('phone').notNullable()
       table.enum('role', ['member', 'admin']).defaultTo('member').nullable()
-      table.enum('member_type',['bronze', 'silver', 'gold']).defaultTo('bronze')
+      table.enum('member_type', ['bronze', 'silver', 'gold']).defaultTo('bronze')
       table.integer('points').defaultTo(0).nullable()
       table.timestamps(true, true)
     })

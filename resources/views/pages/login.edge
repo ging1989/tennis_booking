@@ -1,50 +1,49 @@
 @layouts.master({title: 'Login'})
 
 <div class="booking-layout centered login-layout">
-    <div class="booking-main">
-        <h2>เข้าสู่ระบบ</h2>
-        <p class="booking-subtitle">เข้าสู่ระบบด้วยบัญชีสมาชิก</p>
+  <div class="booking-main">
+    <h2>เข้าสู่ระบบ</h2>
+    <p class="booking-subtitle">เข้าสู่ระบบด้วยบัญชีสมาชิก</p>
 
-        @if(flashMessages.has('errors')) 
-            <div class="form-error-banner">
-                @each(error in flashMessages.get('errors'))
-                    <p>{{ error.message }}</p>
-                @end
-            </div>
+    @if(flashMessages.has('errors'))
+      <div class="form-error-banner">
+        @each(error in flashMessages.get('errors'))
+          <p>{{ error.message }}</p>
         @end
+      </div>
+    @end
 
-        <form action="/login" method="post">
-            {{ csrfField() }}
+    <form action="/login" method="post">
+      {{ csrfField() }}
 
-            <div class="booking-field">
-                <label>Email</label>
-                <input type="email" name="email" placeholder="email@example.com" required>
-            </div>
+      <div class="booking-field">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="email@example.com" required>
+      </div>
 
-            <div class="booking-field">
-                <label>Password</label>
-                <input type="password" name="password" placeholder="กรอกรหัสผ่าน" required>
-            </div>
+      <div class="booking-field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="กรอกรหัสผ่าน" required>
+      </div>
 
-            <button class="continue-btn" type="submit">เข้าสู่ระบบ</button>
+      <button class="continue-btn" type="submit">เข้าสู่ระบบ</button>
 
-            <div class="login-options">
-                <label class="remember-me">
-                    <input type="checkbox" name="remember">
-                    <span>จำฉันไว้ที่อุปกรณ์นี้</span>
-                </label>
+      <div class="login-options">
+        <label class="remember-me">
+          <input type="checkbox" name="remember">
+          <span>จำฉันไว้ที่อุปกรณ์นี้</span>
+        </label>
 
-                <a href="/forgot-password" class="forgot-password-link">ลืมรหัสผ่าน</a>
-            </div>
+        <a href="/forgot-password" class="forgot-password-link">ลืมรหัสผ่าน</a>
+      </div>
 
-            <div class="login-divider">
-                <span>หรือ</span>
-            </div>
+      <div class="login-divider">
+        <span>หรือ</span>
+      </div>
 
-            <a href="/register" class="secondary-login-btn">สร้างบัญชีผู้ใช้งาน</a>
-
-        </form>
-    </div>
+      <a href="/register" class="secondary-login-btn">สร้างบัญชีผู้ใช้งาน</a>
+    </form>
+  </div>
 </div>
-    
+
 @end
