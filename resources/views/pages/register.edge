@@ -5,12 +5,25 @@
         <h2>สมัครสมาชิก</h2>
         <p class="booking-subtitle">สร้างบัญชีผู้ใช้งานใหม่</p>
 
+        @if(flashMessages.has('errors')) 
+            <div class="form-error-banner">
+                @each(error in flashMessages.get('errors'))
+                    <p>{{ error.message }}</p>
+                @end
+            </div>
+        @end
+
         <form action="/register" method="post">
             {{ csrfField() }}
 
             <div class="booking-field">
                 <label>ชื่อ-นามสกุล</label>
                 <input type="text" name="full_name" placeholder="กรอกชื่อ-นามสกุล">
+            </div>
+
+            <div class="booking-field">
+                <label>เบอร์โทรศัพท์</label>
+                <input type="tel" name="phone" placeholder="08x-xxx-xxxx" required>
             </div>
 
             <div class="booking-field">

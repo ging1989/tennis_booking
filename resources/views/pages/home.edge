@@ -31,8 +31,10 @@
             <div class="header">{{ item.court.courtName }}</div>
             <div class="slot-grid">
               @each(slot in item.slots)
-                @if(slot.available)
-                  <a class="slot available" href="/booking?court={{ item.court.id }}&time={{ slot.time }}">
+                @if(slot.isPast)
+                  <span class="slot past">{{ slot.time }}</span>
+                @elseif(slot.available)
+                    <a class="slot available" href="/booking?court={{ item.court.id }}&time={{ slot.time }}">
                     {{ slot.time }}
                   </a>
                 @else

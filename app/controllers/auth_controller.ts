@@ -37,7 +37,7 @@ export default class AuthController {
 
         const user = await User.findBy('email', email)
         if (!user) {
-            session.flash('error', [{ message: 'ไม่พบบัญชีผู้ใช้งานนี้' }])
+            session.flash('errors', [{ message: 'ไม่พบบัญชีผู้ใช้งานนี้' }])
             
             return response.redirect().back()
         }
