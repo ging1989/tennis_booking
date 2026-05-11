@@ -223,12 +223,14 @@ select,
 .slot.unavailable {
   background-color: #fde8e8;
   color: #b42318;
+  pointer-events: none;
 }
 
 .slot.past {
   background-color: #e5e7eb;
   color: #9ca3af;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .footer {
@@ -423,7 +425,7 @@ select,
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  margin-bottom: 24px;
+  margin-top: 16px;
 }
 
 .slot-card {

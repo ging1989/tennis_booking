@@ -32,13 +32,11 @@
           <div class="slot-grid">
             @each(slot in item.slots)
               @if(slot.isPast)
-                <span class="slot past">{{ slot.time }}</span>
+                <a class="slot past">{{ slot.time }}</a>
               @elseif(slot.available)
-                <a class="slot available" href="/booking?court={{ item.court.id }}&time={{ slot.time }}">
-                  {{ slot.time }}
-                </a>
+                <a class="slot available" href="/booking?court={{ item.court.id }}&time={{ slot.time }}">{{ slot.time }}</a>
               @else
-                <span class="slot unavailable">{{ slot.time }}</span>
+                <a class="slot unavailable">{{ slot.time }}</a>
               @end
             @end
           </div>
