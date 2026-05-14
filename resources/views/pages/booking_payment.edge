@@ -41,7 +41,7 @@
           <div class="booking-field payment-slip-field">
             <label for="payment_slip" class="upload-box">
               <span class="upload-title">อัพโหลดสลิป</span>
-              <span class="upload-hint">เลือกไฟล์ JPG หรือ PNG ขนาดไม่เกิน 5mb</span>
+              <span class="upload-hint" id="upload-hint">เลือกไฟล์ JPG หรือ PNG ขนาดไม่เกิน 5mb</span>
             </label>
             <input id="payment_slip" type="file" name="payment_slip" accept="image/*" required hidden>
           </div>
@@ -61,5 +61,16 @@
     </form>
   </div>
 </div>
+
+<script>
+  document.getElementById('payment_slip').addEventListener('change', function () {
+    const hint = document.getElementById('upload-hint')
+    if (this.files && this.files[0]) {
+      hint.textContent = this.files[0].name
+    } else {
+      hint.textContent = 'เลือกไฟล์ JPG หรือ PNG ขนาดไม่เกิน 5mb'
+    }
+  })
+</script>
 
 @end

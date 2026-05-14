@@ -265,7 +265,7 @@ export default class BookingsController {
 
     session.forget('booking_data')
     session.flash('success', 'ทำการจองสนามสำเร็จ')
-    return response.redirect('/booking')
+    return response.redirect('/')
   }
 
   async paymentInit({ request, response, session }: HttpContext) {

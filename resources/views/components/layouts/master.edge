@@ -11,6 +11,12 @@
   @vite(['resources/css/app.css'])
 </head>
 
+@if(flashMessages.has('success'))
+  <script>
+    alert('{{ flashMessages.get('success') }}')
+  </script>
+@end
+
 <body>
   @include('partials/navbar')
 
