@@ -103,7 +103,7 @@ function createBookingNo(date: string) {
   const dateText = date.replace(/-/g, '')
   const randomText = Math.random().toString(36).substring(2, 6).toUpperCase()
 
-  return `BK-${dateText}-${randomText}`
+  return `${dateText}-${randomText}`
 }
 
 function getSelectedTime(slots: string[]) {
@@ -313,5 +313,24 @@ export default class BookingsController {
     const court = await Court.find(bookingData.court_id)
 
     return view.render('pages/booking_payment', { bookingData, court })
+  }
+
+  async checkBooking({ view }: HttpContext) {
+    return view.render('pages/check_booking', { booking: null })
+  }
+
+  async searchBooking({ request, view }: HttpContext) {
+    const bookingNo = request.input('booking_no')
+    const contact = request.input('contact')
+
+    const booking = await Booking.query()
+      .where('booking_no', bookingNo)
+      .where((q) => {
+        q.where('customer_email', contact).orWhere('customer_phone', contact)
+      })
+      .preload('court')
+      .first()
+    
+    return view.render('pages/check_booking', { booking })
   }
 }

@@ -783,3 +783,18 @@ i.icon {
   font-family: Icons !important;
 }
 
+.check-booking-title {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.check-booking-subtitle {
+  text-align: center;
+  margin-bottom: 36;
+}
+
+.check-booking label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+

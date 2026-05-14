@@ -11,14 +11,14 @@
   @vite(['resources/css/app.css'])
 </head>
 
-@if(flashMessages.has('success'))
-  <script>
-    alert('{{ flashMessages.get('success') }}')
-  </script>
-@end
-
 <body>
   @include('partials/navbar')
+
+  @if(flashMessages.has('success'))
+  <script>
+    alert("{{ flashMessages.get('success') }}")
+  </script>
+  @end
 
   <main class="page-content">
     {{{ await $slots.main() }}}

@@ -1,0 +1,35 @@
+@layouts.master({title: 'Check Booking'})
+
+    <div class="booking-layout centered">
+        <h2 class="check-booking-title">ตรวจสอบสถานะการจอง</h2>
+        <p class="check-booking-subtitle">กรอกรหัสการจอง และ Email หรือเบอร์โทรศัพท์เพื่อค้นหา</p>
+
+        <form action="/check-booking" method="post">
+            {{ csrfField() }}
+
+            <div class="booking-field-row">
+                <div class="booking-field">
+                    <label>Booking No.</label>
+                    <input type="text" name="booking_no">
+                 </div>
+
+                <div class="booking-field">
+                    <label>Email หรือ เบอร์โทรศัพท์</label>
+                    <input type="text" name="contact">
+                </div>
+            </div>
+
+            <button class="continue-btn" type="submit">ค้นหา</button>
+        </form>
+
+        @if(booking)
+            <div style="margin-top: 20px;">
+                <div class="summary-row"><span>Booking No. {{ booking.bookingNo }}</span></div>
+            </div>
+        @elseif(searched)
+            <p style="margin-top: 24px; color: #b42318">ไม่พบข้อมูลการจอง</p>
+        @end
+    </div>
+
+
+@end
