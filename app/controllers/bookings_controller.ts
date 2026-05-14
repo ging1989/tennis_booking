@@ -17,6 +17,7 @@ type BookingData = {
   customer_email: string
   customer_type: 'guest' | 'member'
   court_id: number
+  user_id: number | null
   booking_date: string
   time_start: string
   time_end: string
@@ -103,7 +104,7 @@ function createBookingNo(date: string) {
   const dateText = date.replace(/-/g, '')
   const randomText = Math.random().toString(36).substring(2, 6).toUpperCase()
 
-  return `${dateText}-${randomText}`
+  return `${dateText}${randomText}`
 }
 
 function getSelectedTime(slots: string[]) {
@@ -234,6 +235,7 @@ export default class BookingsController {
         const booking = await Booking.create(
           {
             ...bookingData,
+            userId: bookingData.user_id,
             paymentSlip: slipPath,
             status: 'pending',
           },
@@ -294,6 +296,7 @@ export default class BookingsController {
       customer_email: data.customer_email,
       customer_type: data.customer_type,
       court_id: data.court_id,
+      user_id: session.get('user')?.id ?? null,
       booking_date: data.booking_date,
       time_start: timeStart,
       time_end: timeEnd,
@@ -316,12 +319,22 @@ export default class BookingsController {
   }
 
   async checkBooking({ view }: HttpContext) {
-    return view.render('pages/check_booking', { booking: null })
+    return view.render('pages/check_booking', {
+      booking: null,
+      searched: false,
+    })
   }
 
   async searchBooking({ request, view }: HttpContext) {
-    const bookingNo = request.input('booking_no')
-    const contact = request.input('contact')
+    const bookingNo = String(request.input('booking_no') ?? '').trim()
+    const contact = String(request.input('contact') ?? '').trim()
+
+    if (!bookingNo || !contact) {
+      return view.render('pages/check_booking', {
+        booking: null,
+        searched: true,
+      })
+    }
 
     const booking = await Booking.query()
       .where('booking_no', bookingNo)
@@ -330,7 +343,23 @@ export default class BookingsController {
       })
       .preload('court')
       .first()
-    
-    return view.render('pages/check_booking', { booking })
+
+    return view.render('pages/check_booking', {
+      booking,
+      searched: true,
+    })
   }
+
+  async myBookings({ view, session, response }: HttpContext) {
+    const user = session.get('user')
+    if(!user) return response.redirect('/login')
+    
+    const bookings = await Booking.query()
+      .where('user_id', user.id)
+      .preload('court')
+      .orderBy('created_at', 'desc')
+    
+    return view.render('pages/my_bookings', { bookings })
+  }
+
 }

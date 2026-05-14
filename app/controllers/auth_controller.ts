@@ -3,6 +3,27 @@ import User from '#models/user'
 import hash from '@adonisjs/core/services/hash'
 import { registerValidator } from '#validators/register_validator'
 
+const USER_SESSION_KEY = 'user'
+
+type LoginForm = {
+  email: string
+  password: string
+}
+
+function flashError(session: HttpContext['session'], message: string) {
+  session.flash('errors', [{ message }])
+}
+
+function getUserSession(user: User) {
+  return {
+    id: user.id,
+    fullName: user.fullName,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+  }
+}
+
 export default class AuthController {
   async showLogin({ view }: HttpContext) {
     return view.render('pages/login')
@@ -17,7 +38,7 @@ export default class AuthController {
     const existingUser = await User.findBy('email', data.email)
 
     if (existingUser) {
-      session.flash('errors', [{ message: 'Email นี้มีผู้ใช้งานแล้ว' }])
+      flashError(session, 'Email นี้มีผู้ใช้งานแล้ว')
       return response.redirect().back()
     }
 
@@ -32,34 +53,28 @@ export default class AuthController {
   }
 
   async login({ request, response, session }: HttpContext) {
-    const { email, password } = request.only(['email', 'password'])
+    const { email, password } = request.only(['email', 'password']) as LoginForm
     const user = await User.findBy('email', email)
 
     if (!user) {
-      session.flash('errors', [{ message: 'ไม่พบบัญชีผู้ใช้งานนี้' }])
+      flashError(session, 'ไม่พบบัญชีผู้ใช้งานนี้')
       return response.redirect().back()
     }
 
     const passwordIsCorrect = await hash.verify(user.password, password)
 
     if (!passwordIsCorrect) {
-      session.flash('errors', [{ message: 'รหัสผ่านไม่ถูกต้อง' }])
+      flashError(session, 'รหัสผ่านไม่ถูกต้อง')
       return response.redirect().back()
     }
 
-    session.put('user', {
-      id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-    })
+    session.put(USER_SESSION_KEY, getUserSession(user))
 
     return response.redirect().toRoute('home')
   }
 
   async logout({ session, response }: HttpContext) {
-    session.forget('user')
+    session.forget(USER_SESSION_KEY)
     return response.redirect().toRoute('home')
   }
 }

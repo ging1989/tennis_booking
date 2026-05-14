@@ -31,3 +31,6 @@ router.get('/booking/payment', [BookingsController, 'payment'])
 
 router.get('/check-booking', [BookingsController, 'checkBooking'])
 router.post('/check-booking', [BookingsController, 'searchBooking'])
+
+router.get('/my-bookings', [BookingsController, 'myBookings'])
+

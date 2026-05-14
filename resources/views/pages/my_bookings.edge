@@ -1,0 +1,43 @@
+@layouts.master({title: 'ประวัติการจอง'})
+
+<div class="ui container" style="padding: 40px 0">
+    <h2>ประวัติการจอง</h2>
+
+@if(bookings.length === 0)
+    <p style="color: #666; margin-top: 24px;">ยังไม่มีประวัติการจอง</p>
+@else
+    <table class="ui table" style="margin-top: 24px;">
+        <thead>
+            <tr>
+                <th>Booking No.</th>
+                <th>วันที่</th>
+                <th>สนาม</th>
+                <th>เวลา</th>
+                <th>ราคา</th>
+                <th>สถานะ</th>
+            </tr>
+        </thead>
+        <tbody>
+            @each(booking in bookings)
+                <tr>
+                    <td>{{ booking.bookingNo }}</td>
+                    <td>{{ new Date(booking.bookingDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) }}</td>
+                    <td>{{ booking.court.courtName }}</td>
+                    <td>{{ booking.timeStart.substring(0, 5) }} - {{ booking.timeEnd.substring(0, 5) }}</td>
+                    <td>{{ booking.totalPrice }}</td>
+                    <td>
+                        @if(booking.status === 'confirmed')
+                            <span class="ui green label">ยืนยันแล้ว</span>
+                        @elseif(booking.status === 'cancelled')
+                            <span class="ui red label">ยกเลิก</span>
+                        @else
+                            <span class="ui yellow label">รอดำเนินการ</span>
+                        @end
+                    </td>
+                </tr>
+            @end
+        </tbody>
+    </table>
+    @end
+</div>
+@end
