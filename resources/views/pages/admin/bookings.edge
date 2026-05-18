@@ -18,6 +18,7 @@
         <th>วันที่จอง</th>
         <th>Booking No.</th>
         <th>ลูกค้า</th>
+        <th>ประเภทลูกค้า</th>
         <th>เบอร์โทร</th>
         <th>วันที่เข้าใช้งาน</th>
         <th>สนาม</th>
@@ -41,6 +42,7 @@
           </td>
           <td>{{ booking.bookingNo }}</td>
           <td>{{ booking.customerName }}</td>
+          <td>{{ booking.customerType }}</td>
           <td>{{ booking.customerPhone }}</td>
           <td>
             {{ new Date(booking.bookingDate).toLocaleDateString('th-TH', {
