@@ -25,6 +25,7 @@ export default class extends BaseSchema {
       table.integer('total_price').notNullable()
       table.integer('discount').defaultTo(0)
       table.enum('status', ['pending', 'confirmed', 'cancelled']).defaultTo('pending')
+      table.string('payment_slip').nullable()
       table.timestamps(true, true)
     })
   }

@@ -17,7 +17,7 @@
 
         <div class="right menu">
           <a href="/my-bookings" class="item">ประวัติการจอง</a>
-          <a href="/logout" class="item">ออกจากระบบ</a>
+          <button type="submit" form="logout-form" class="item" style="background:none;border:none;cursor:pointer;font-family:inherit;font-size:1em;">ออกจากระบบ</button>
         </div>
       </div>
     @else
@@ -26,3 +26,7 @@
     @end
   </div>
 </div>
+
+<form id="logout-form" action="/logout" method="post" hidden>
+  {{ csrfField() }}
+</form>

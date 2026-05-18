@@ -1,0 +1,48 @@
+@layouts.master({title: 'การจองสำเร็จ'})
+
+<div class="booking-layout centered" style="max-width: 480px;">
+    <div class="booking-main">
+        
+        <div style="text-align: center; margin-bottom: 24px">
+            <i class="check circle icon" style="font-size: 3rem; color: #16a34a"></i>
+            <h2>การจองสำเร็จแล้ว</h2>
+            <p>เจ้าหน้าที่จะตรวจสอบและยืนยันการจองให้คุณในเร็วๆนี้</p>
+        </div>
+
+        <div class="booking-check-result">
+            <div class="summary-row">
+                <span>Booking No.</span>
+                <strong>{{ booking.bookingNo }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>วันที่เข้าใช้งาน</span>
+                <strong>
+                    {{ new Date(booking.bookingDate).toLocaleDateString('th-TH', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    })}}
+                </strong>
+            </div>
+
+            <div class="summary-row">
+                <span>สนาม</span>
+                <strong>{{ booking.court.courtName }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>สถานะ</span>
+                <strong>รอการยืนยัน</strong>
+            </div>
+
+            <div style="text-align: center; margin-top: 28px;">
+                <a href="/" class="continue-btn">กลับหน้าหลัก</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@end

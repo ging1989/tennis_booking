@@ -1,0 +1,43 @@
+@layouts.admin({ title: 'จัดการสนาม' })
+
+<div class="admin-page-header">
+  <div>
+    <h1>สนาม</h1>
+    <p>รายการสนามและสถานะการเปิดใช้งาน</p>
+  </div>
+</div>
+
+@if(courts.length === 0)
+  <div class="admin-empty-state">
+    ยังไม่มีข้อมูลสนาม
+  </div>
+@else
+
+  <div class="courts-table-wrap">
+    <table class="ui celled table admin-table court-table">
+    <thead>
+      <tr>
+        <th>ชื่อสนาม</th>
+        <th>ราคาต่อชั่วโมง</th>
+        <th>สถานะ</th>
+        <th>จัดการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      @each(court in courts)
+        <tr>
+          <td>{{ court.courtName }}</td>
+          <td>{{ court.pricePerHour }}</td>
+          <td>{{ court.status }}</td>
+          <td>
+            <a href="/admin/courts/{{ court.id }}/edit" class="ui small primary button">แก้ไข</a>
+          </td>
+        </tr>
+      @end
+    </tbody>
+  </table>
+  </div>
+  
+@end
+
+@end

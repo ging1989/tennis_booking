@@ -1,0 +1,37 @@
+@layouts.admin({ title: 'แก้ไขสนาม' })
+
+<div class="admin-page-header">
+  <div>
+    <h1>แก้ไขสนาม</h1>
+    <p>ปรับชื่อสนาม ราคา และสถานะการใช้งาน</p>
+  </div>
+</div>
+
+<form action="/admin/courts/{{ court.id }}" method="post" class="ui form admin-form">
+  {{ csrfField() }}
+
+  <div class="field">
+    <label>ชื่อสนาม</label>
+    <input type="text" name="court_name" value="{{ court.courtName }}" required>
+  </div>
+
+  <div class="field">
+    <label>ราคาต่อชั่วโมง</label>
+    <input type="number" name="price_per_hour" value="{{ court.pricePerHour }}" min="0" required>
+  </div>
+
+  <div class="field">
+    <label>สถานะ</label>
+    <select name="status" required>
+      <option value="available" {{ court.status === 'available' ? 'selected' : '' }}>พร้อมใช้งาน</option>
+      <option value="maintenance" {{ court.status === 'maintenance' ? 'selected' : '' }}>ปิดซ่อมบำรุง</option>
+    </select>
+  </div>
+
+  <div class="admin-form-actions">
+    <a href="/admin/courts" class="ui button">ยกเลิก</a>
+    <button type="submit" class="ui primary button">บันทึก</button>
+  </div>
+</form>
+
+@end

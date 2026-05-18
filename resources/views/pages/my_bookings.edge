@@ -9,8 +9,9 @@
     <table class="ui table" style="margin-top: 24px;">
         <thead>
             <tr>
+                <th>วันที่ทำการจอง</th>
                 <th>Booking No.</th>
-                <th>วันที่</th>
+                <th>วันที่เข้าใช้งาน</th>
                 <th>สนาม</th>
                 <th>เวลา</th>
                 <th>ราคา</th>
@@ -20,8 +21,21 @@
         <tbody>
             @each(booking in bookings)
                 <tr>
+                    <td>
+                        {{ new Date(booking.createdAt).toLocaleDateString('th-TH', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}}
+                    </td>
                     <td>{{ booking.bookingNo }}</td>
-                    <td>{{ new Date(booking.bookingDate).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) }}</td>
+                    <td>
+                        {{ new Date(booking.bookingDate).toLocaleDateString('th-TH', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                        })}}
+                    </td>
                     <td>{{ booking.court.courtName }}</td>
                     <td>{{ booking.timeStart.substring(0, 5) }} - {{ booking.timeEnd.substring(0, 5) }}</td>
                     <td>{{ booking.totalPrice }}</td>

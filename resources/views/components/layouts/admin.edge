@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
+  @vite(['resources/css/app.css'])
+</head>
+
+<body class="admin-body">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <a href="/admin/bookings" class="admin-brand">
+        <img src="/images/court-logo.png" alt="Urban Tennis Club Logo">
+        <span>Admin</span>
+      </a>
+
+      <nav class="admin-nav">
+        <a href="/admin/bookings" class="admin-nav-item {{ request.url().startsWith('/admin/bookings') ? 'active' : '' }}">
+          รายการจอง
+        </a>
+        <a href="/admin/courts" class="admin-nav-item {{ request.url().startsWith('/admin/courts') ? 'active' : '' }}">
+          สนาม
+        </a>
+      </nav>
+    </aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar">
+        <div></div>
+        <div class="admin-user-actions">
+          <span class="admin-user-name">{{ adminUser?.fullName ?? 'Admin' }}</span>
+          <form action="/logout" method="post" style="display:inline">
+            {{ csrfField() }}
+            <button type="submit" class="ui small button">ออกจากระบบ</button>
+          </form>
+        </div>
+      </header>
+
+      <main class="admin-content">
+        {{{ await $slots.main() }}}
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.5.0/dist/semantic.min.js"></script>
+  @vite(['resources/js/app.ts'])
+</body>
+</html>

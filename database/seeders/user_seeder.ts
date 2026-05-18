@@ -1,44 +1,90 @@
 import User from '#models/user'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
-import hash from '@adonisjs/core/services/hash'
+
+const USERS = [
+  {
+    fullName: 'admin01',
+    email: 'admin01@tennis.com',
+    password: 'AdminTennis@01',
+    phone: '0822482510',
+    role: 'admin',
+  },
+  {
+    fullName: 'Anan Wongchai',
+    email: 'anan.w@tennis.com',
+    password: 'AnanTennis@01',
+    phone: '0812345678',
+    role: 'member',
+  },
+  {
+    fullName: 'Krittin Suksawat',
+    email: 'krittin.s@tennis.com',
+    password: 'KrittinTennis@01',
+    phone: '0823456789',
+    role: 'member',
+  },
+  {
+    fullName: 'Nattapong Charoenkit',
+    email: 'nattapong.c@tennis.com',
+    password: 'NattapongTennis@01',
+    phone: '0834567890',
+    role: 'member',
+  },
+  {
+    fullName: 'Piyawat Rattanakul',
+    email: 'piyawat.r@tennis.com',
+    password: 'PiyawatTennis@01',
+    phone: '0845678901',
+    role: 'member',
+  },
+  {
+    fullName: 'Thanawat Boonmee',
+    email: 'thanawat.b@tennis.com',
+    password: 'ThanawatTennis@01',
+    phone: '0856789012',
+    role: 'member',
+  },
+  {
+    fullName: 'Supakorn Limcharoen',
+    email: 'supakorn.l@tennis.com',
+    password: 'SupakornTennis@01',
+    phone: '0867890123',
+    role: 'member',
+  },
+  {
+    fullName: 'Chayut Phromsri',
+    email: 'chayut.p@tennis.com',
+    password: 'ChayutTennis@01',
+    phone: '0878901234',
+    role: 'member',
+  },
+  {
+    fullName: 'Narissara Kanjanawan',
+    email: 'narissara.k@tennis.com',
+    password: 'NarissaraTennis@01',
+    phone: '0889012345',
+    role: 'member',
+  },
+  {
+    fullName: 'Pimchanok Saelim',
+    email: 'pimchanok.s@tennis.com',
+    password: 'PimchanokTennis@01',
+    phone: '0890123456',
+    role: 'member',
+  },
+  {
+    fullName: 'Waranya Techakul',
+    email: 'waranya.t@tennis.com',
+    password: 'WaranyaTennis@01',
+    phone: '0801234567',
+    role: 'member',
+  },
+]
 
 export default class extends BaseSeeder {
   async run() {
-    await User.createMany([
-      {
-        fullName: 'admin01',
-        email: 'admin01@tennis.com',
-        password: await hash.make('AdminTennis@01'),
-        phone: '0822482510',
-        role: 'admin',
-      },
-      {
-        fullName: 'Ganokporn Jongsutjarittum',
-        email: 'ganokporn@testmember.com',
-        password: await hash.make('Member@1234'),
-        phone: '0922239865',
-        role: 'member',
-        memberType: 'bronze',
-        points: 25,
-      },
-      {
-        fullName: 'Thakwan Kongrojanakorn',
-        email: 'thakwan@testmember.com',
-        password: await hash.make('Member@1234'),
-        phone: '0953708500',
-        role: 'member',
-        memberType: 'silver',
-        points: 150,
-      },
-      {
-        fullName: 'Natalee Sawasdee',
-        email: 'natalee@testmember.com',
-        password: await hash.make('Member@1234'),
-        phone: '0827907900',
-        role: 'member',
-        memberType: 'gold',
-        points: 200,
-      },
-    ])
+    for (const user of USERS) {
+      await User.updateOrCreate({ email: user.email }, user)
+    }
   }
 }

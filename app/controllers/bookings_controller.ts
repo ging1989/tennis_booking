@@ -172,7 +172,7 @@ export default class BookingsController {
     return response.json({ bookedSlots })
   }
 
-  async details({ view, request, response, session }: HttpContext) {
+  async details({ view, request, response, auth }: HttpContext) {
     const courtId = request.input('court_id')
     const bookingDate = request.input('date')
     const slots = request.input('slots') as string | undefined
@@ -197,7 +197,7 @@ export default class BookingsController {
       timeEnd,
       totalPrice,
       bookingNo,
-      sessionUser: session.get('user') ?? null,
+      sessionUser: auth.user ?? null,
     })
   }
 
@@ -266,11 +266,10 @@ export default class BookingsController {
     }
 
     session.forget('booking_data')
-    session.flash('success', 'ทำการจองสนามสำเร็จ')
-    return response.redirect('/')
+    return response.redirect(`/booking/success/${bookingData.booking_no}`)
   }
 
-  async paymentInit({ request, response, session }: HttpContext) {
+  async paymentInit({ request, response, session, auth }: HttpContext) {
     const data = await request.validateUsing(storeBookingValidator)
     const court = await Court.find(data.court_id)
     const slotArr = parseSlots(data.slots)
@@ -290,13 +289,13 @@ export default class BookingsController {
     const totalPrice = slotArr.length * court.pricePerHour
 
     const bookingData: BookingData = {
-      booking_no: createBookingNo(data.booking_date),
+      booking_no: data.booking_no,
       customer_name: data.customer_name,
       customer_phone: data.customer_phone,
       customer_email: data.customer_email,
       customer_type: data.customer_type,
       court_id: data.court_id,
-      user_id: session.get('user')?.id ?? null,
+      user_id: auth.user?.id ?? null,
       booking_date: data.booking_date,
       time_start: timeStart,
       time_end: timeEnd,
@@ -311,28 +310,34 @@ export default class BookingsController {
 
   async payment({ view, session, response }: HttpContext) {
     const bookingData = session.get('booking_data')
-    if (!bookingData) return response.redirect('/booking')
+    if(!bookingData) return response.redirect('/booking')
 
     const court = await Court.find(bookingData.court_id)
 
     return view.render('pages/booking_payment', { bookingData, court })
   }
 
-  async checkBooking({ view }: HttpContext) {
-    return view.render('pages/check_booking', {
-      booking: null,
-      searched: false,
-    })
+  async bookingSuccess({ params, view, response }: HttpContext) {
+    const booking = await Booking.query()
+      .where('booking_no', params.bookingNo)
+      .preload('court')
+      .first()
+
+    if(!booking) return response.redirect('/')
+
+    return view.render('pages/booking_success', { booking })
   }
 
-  async searchBooking({ request, view }: HttpContext) {
+
+  async checkBooking({ request, view }: HttpContext) {
     const bookingNo = String(request.input('booking_no') ?? '').trim()
     const contact = String(request.input('contact') ?? '').trim()
 
-    if (!bookingNo || !contact) {
+    if(!bookingNo || !contact) {
       return view.render('pages/check_booking', {
         booking: null,
-        searched: true,
+        searched: false,
+        input: { bookingNo, contact }
       })
     }
 
@@ -347,11 +352,13 @@ export default class BookingsController {
     return view.render('pages/check_booking', {
       booking,
       searched: true,
+      input: { bookingNo, contact },
     })
   }
 
-  async myBookings({ view, session, response }: HttpContext) {
-    const user = session.get('user')
+  async myBookings({ view, auth, response }: HttpContext) {
+    await auth.check()
+    const user = auth.user
     if(!user) return response.redirect('/login')
     
     const bookings = await Booking.query()

@@ -1,37 +1,80 @@
 @layouts.master({title: 'Check Booking'})
 
-    <div class="booking-layout centered">
-        <div class="booking-main">
-            <h2>ตรวจสอบสถานะการจอง</h2>
-            <p class="booking-subtitle">กรอกรหัสการจอง และ Email หรือเบอร์โทรศัพท์เพื่อค้นหา</p>
+<div class="booking-layout centered">
+    <div class="booking-main">
+        <h2>ตรวจสอบสถานะการจอง</h2>
+        <p class="booking-subtitle">
+            กรอกรหัสการจอง และ Email หรือเบอร์โทรศัพท์เพื่อค้นหา
+        </p>
 
-            <form action="/check-booking" method="post">
-                {{ csrfField() }}
+        <form action="/check-booking" method="get">
 
-                <div class="booking-field-row">
-                    <div class="booking-field">
-                        <label>Booking No.</label>
-                        <input type="text" name="booking_no">
-                    </div>
-
-                    <div class="booking-field">
-                        <label>Email หรือ เบอร์โทรศัพท์</label>
-                        <input type="text" name="contact">
-                    </div>
+            <div class="booking-field-row">
+                <div class="booking-field">
+                    <label>Booking No.</label>
+                    <input type="text" name="booking_no" value="{{ input?.bookingNo ?? '' }}">
                 </div>
 
-                <button class="continue-btn btn-sm" type="submit">ค้นหา</button>
-            </form>
-
-            @if(booking)
-                <div style="margin-top: 20px;">
-                    <div class="summary-row"><span>Booking No. {{ booking.bookingNo }}</span></div>
+                <div class="booking-field">
+                    <label>Email หรือ เบอร์โทรศัพท์</label>
+                    <input type="text" name="contact" value="{{ input?.contact ?? '' }}">
                 </div>
-            @elseif(searched)
-                <p style="margin-top: 24px; color: #b42318">ไม่พบข้อมูลการจอง</p>
-            @end
+            </div>
+
+            <button class="continue-btn btn-sm" type="submit">
+                ค้นหา
+            </button>
+        </form>
+
+        @if(booking)
+
+        <div class="booking-check-result">
+
+            <div class="summary-row">
+                <span>Booking No.</span>
+                <strong>{{ booking.bookingNo }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>วันที่จอง</span>
+                <strong>
+                    {{ new Date(booking.bookingDate).toLocaleDateString('th-TH', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    })}}
+                </strong>
+            </div>
+
+            <div class="summary-row">
+                <span>สนามที่จอง</span>
+                <strong>{{ booking.court.courtName }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>สถานะ</span>
+                <strong>
+                    @if(booking.status === 'confirmed')
+                        <span class="ui green label">ยืนยันการจอง</span>
+                    @elseif(booking.status === 'cancelled')
+                        <span class="ui red label">ยกเลิก</span>
+                    @else
+                        <span class="ui yellow label">รอดำเนินการ</span>
+                    @end
+                </strong>
+            </div>
+
         </div>
-    </div>
 
+        @elseif(searched)
+
+            <p style="margin-top: 24px; color: #b42318; text-align:center">
+                ไม่พบข้อมูลการจอง
+            </p>
+
+        @end
+
+    </div>
+</div>
 
 @end

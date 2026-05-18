@@ -1,0 +1,90 @@
+@layouts.admin({ title: 'รายการจองทั้งหมด' })
+
+<div class="admin-page-header">
+  <div>
+    <h1>รายการจองทั้งหมด</h1>
+    <p>ดูรายการจองของลูกค้าทั้งหมดในระบบ</p>
+  </div>
+</div>
+
+@if(bookings.length === 0)
+  <div class="admin-empty-state">
+    ยังไม่มีรายการจอง
+  </div>
+@else
+  <table class="ui celled table admin-table">
+    <thead>
+      <tr>
+        <th>วันที่จอง</th>
+        <th>Booking No.</th>
+        <th>ลูกค้า</th>
+        <th>เบอร์โทร</th>
+        <th>วันที่เข้าใช้งาน</th>
+        <th>สนาม</th>
+        <th>เวลา</th>
+        <th>ราคา</th>
+        <th>สถานะ</th>
+        <th>สลิป</th>
+        <th>ดำเนินการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      @each(booking in bookings)
+        <tr>
+
+          <td>
+            {{ new Date(booking.createdAt).toLocaleDateString('th-TH', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            }) }}
+          </td>
+          <td>{{ booking.bookingNo }}</td>
+          <td>{{ booking.customerName }}</td>
+          <td>{{ booking.customerPhone }}</td>
+          <td>
+            {{ new Date(booking.bookingDate).toLocaleDateString('th-TH', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            }) }}
+          </td>
+          <td>{{ booking.court.courtName }}</td>
+          <td>{{ booking.timeStart.substring(0, 5) }} - {{ booking.timeEnd.substring(0, 5) }}</td>
+          <td>{{ booking.totalPrice }}</td>
+          <td>
+            @if(booking.status === 'confirmed')
+              <span class="ui green label booking-status-label">ยืนยันแล้ว</span>
+            @elseif(booking.status === 'cancelled')
+              <span class="ui red label booking-status-label">ยกเลิก</span>
+            @else
+              <span class="ui yellow label booking-status-label">รอดำเนินการ</span>
+            @end
+          </td>
+          <td>
+            @if(booking.paymentSlip)
+                <a href="/{{ booking.paymentSlip }}" target="_blank" class="slip-link">ดูสลิป</a>
+            @else
+                -
+            @end
+          </td>
+          <td>
+            @if(booking.status === 'pending')
+            <form action="/admin/bookings/{{ booking.id }}/confirm" method="post" style="display: inline-block;">
+                {{ csrfField() }}
+                <button type="submit" class="ui mini green button booking-action-btn">ยืนยัน</button>
+            </form>
+
+            <form action="/admin/bookings/{{ booking.id }}/cancel" method="post" style="display: inline-block;">
+                {{ csrfField() }}
+                <button type="submit" class="ui mini red button booking-action-btn">ปฏิเสธ</button>
+            </form>
+            @end
+          </td>
+        </tr>
+      @end
+    </tbody>
+  </table>
+@end
+
+@end
