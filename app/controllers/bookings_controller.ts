@@ -157,7 +157,7 @@ async function removeUploadedSlip(slipPath: string) {
 
 export default class BookingsController {
   async index({ view, request }: HttpContext) {
-    const courts = await Court.query().orderBy('court_name', 'asc')
+    const courts = await Court.query().where('status', 'available').orderBy('court_name', 'asc')
     const courtId = request.input('court')
     const court = courtId ? await Court.find(courtId) : null
     const bookingDate = request.input('date') || getBangkokToday()
@@ -170,6 +170,11 @@ export default class BookingsController {
 
     if (!date || !courtId) {
       return response.badRequest({ error: 'date and court id are required' })
+    }
+
+    const court = await Court.find(courtId)
+    if (!court || court.status !== 'available') {
+      return response.badRequest({ error: 'court is not available' })
     }
 
     const bookedSlots = await getBookedSlots(date, courtId)
@@ -185,7 +190,7 @@ export default class BookingsController {
     const court = courtId ? await Court.find(courtId) : null
     const slotArr = parseSlots(slots)
 
-    if (!court || !bookingDate || !slotsAreReady(slotArr)) {
+    if (!court || court.status !== 'available' || !bookingDate || !slotsAreReady(slotArr)) {
       return response.redirect('/booking')
     }
 
@@ -234,6 +239,12 @@ export default class BookingsController {
 
     const uniqueFileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${slip.extname}`
     await slip.move(app.publicPath('uploads/slips'), { name: uniqueFileName })
+
+    if (!slip.isValid || slip.state !== 'moved') {
+      session.flash('error', 'อัปโหลดไฟล์ไม่สำเร็จ กรุณาลองใหม่')
+      return response.redirect('/booking/payment')
+    }
+
     const slipPath = `uploads/slips/${uniqueFileName}`
 
     try {
@@ -289,7 +300,7 @@ export default class BookingsController {
     const court = await Court.find(data.court_id)
     const slotArr = parseSlots(data.slots)
 
-    if (!court || !slotsAreReady(slotArr)) {
+    if (!court || court.status !== 'available' || !slotsAreReady(slotArr)) {
       return response.redirect('/booking')
     }
 

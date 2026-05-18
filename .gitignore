@@ -25,4 +25,6 @@ yarn-error.log
 # Platform specific
 .DS_Store
 
-public/uploads/
+public/uploads/**
+!public/uploads/slips/
+!public/uploads/slips/.gitkeep
