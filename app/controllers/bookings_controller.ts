@@ -22,7 +22,6 @@ type BookingData = {
   time_start: string
   time_end: string
   total_price: number
-  discount: number
 }
 
 function slotToMinutes(time: string) {
@@ -234,8 +233,17 @@ export default class BookingsController {
       await db.transaction(async (trx) => {
         const booking = await Booking.create(
           {
-            ...bookingData,
+            bookingNo: bookingData.booking_no,
+            courtId: bookingData.court_id,
             userId: bookingData.user_id,
+            customerName: bookingData.customer_name,
+            customerEmail: bookingData.customer_email,
+            customerPhone: bookingData.customer_phone,
+            customerType: bookingData.customer_type,
+            bookingDate: bookingData.booking_date,
+            timeStart: bookingData.time_start,
+            timeEnd: bookingData.time_end,
+            totalPrice: bookingData.total_price,
             paymentSlip: slipPath,
             status: 'pending',
           },
@@ -300,7 +308,6 @@ export default class BookingsController {
       time_start: timeStart,
       time_end: timeEnd,
       total_price: totalPrice,
-      discount: 0,
     }
 
     session.put('booking_data', bookingData)

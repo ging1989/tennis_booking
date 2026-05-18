@@ -65,6 +65,73 @@ function formatDate(value: string): string {
   return `${day}-${month}-${year}`
 }
 
+function toISODate(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function createDateCarousel(dateInput: HTMLInputElement, onChange: () => void): void {
+  const track = document.getElementById('date-track')
+  const prevBtn = document.getElementById('date-prev') as HTMLButtonElement | null
+  const nextBtn = document.getElementById('date-next') as HTMLButtonElement | null
+
+  if (!track || !prevBtn || !nextBtn) return
+
+  const DAYS_AHEAD = 30
+  const VISIBLE = 4
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const dates: Date[] = Array.from({ length: DAYS_AHEAD }, (_, i) => {
+    const d = new Date(today)
+    d.setDate(today.getDate() + i)
+    return d
+  })
+
+  let selectedDate = dateInput.value || toISODate(today)
+  dateInput.value = selectedDate
+
+  const initialIndex = dates.findIndex((d) => toISODate(d) === selectedDate)
+  let windowStart = Math.max(0, Math.min(initialIndex, dates.length - VISIBLE))
+
+  function render(): void {
+    const slice = dates.slice(windowStart, windowStart + VISIBLE)
+    track!.innerHTML = slice
+      .map((d) => {
+        const iso = toISODate(d)
+        const isSelected = iso === selectedDate
+        const weekday = d.toLocaleDateString('th-TH', { weekday: 'short' })
+        const label = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })
+        return `<button type="button" class="date-btn${isSelected ? ' selected' : ''}" data-date="${iso}">
+          <span class="date-btn-day">${weekday}</span>
+          <span class="date-btn-num">${label}</span>
+        </button>`
+      })
+      .join('')
+
+    prevBtn!.disabled = windowStart === 0
+    nextBtn!.disabled = windowStart + VISIBLE >= dates.length
+  }
+
+  track.addEventListener('click', (event) => {
+    const btn = (event.target as HTMLElement).closest('.date-btn') as HTMLElement | null
+    if (!btn) return
+    selectedDate = btn.dataset.date || selectedDate
+    dateInput.value = selectedDate
+    render()
+    onChange()
+  })
+
+  prevBtn.addEventListener('click', () => {
+    if (windowStart > 0) { windowStart--; render() }
+  })
+
+  nextBtn.addEventListener('click', () => {
+    if (windowStart + VISIBLE < dates.length) { windowStart++; render() }
+  })
+
+  render()
+}
+
 function parseBookedSlots(value: string): string[] {
   try {
     return JSON.parse(value || '[]')
@@ -76,7 +143,8 @@ function parseBookedSlots(value: string): string[] {
 function createBookingPage(page: HTMLElement): void {
   const grid = document.getElementById('slot-grid')
   const bookingDate = document.getElementById('booking-date') as HTMLInputElement | null
-  const courtSelect = document.getElementById('court-select') as HTMLSelectElement | null
+  const courtInput = document.getElementById('court-select') as HTMLInputElement | null
+  const courtBtnGroup = document.getElementById('court-btn-group') as HTMLElement | null
   const continueButton = document.getElementById('continue-booking') as HTMLButtonElement | null
   const courtInfoName = document.querySelector('.court-info-name') as HTMLElement | null
   const courtInfoDetail = document.querySelector('.court-info-detail') as HTMLElement | null
@@ -89,13 +157,12 @@ function createBookingPage(page: HTMLElement): void {
   const sumFee = document.getElementById('sum-fee')
   const sumTotal = document.getElementById('sum-total')
 
-  if (!grid || !bookingDate || !courtSelect || !continueButton || !courtInfoName) {
+  if (!grid || !bookingDate || !courtInput || !continueButton || !courtInfoName) {
     return
   }
 
   const slotGrid = grid
   const dateInput = bookingDate
-  const courtInput = courtSelect
   const nextButton = continueButton
   const courtNameText = courtInfoName
 
@@ -208,15 +275,10 @@ function createBookingPage(page: HTMLElement): void {
     updateSummary()
   }
 
-  async function onCourtChange(courtId: string): Promise<void> {
-    const selectedOption = courtInput.options[courtInput.selectedIndex]
-
-    currentCourtName = courtId ? selectedOption.text : ''
-
-    const parsedPrice = Number(selectedOption.dataset.price)
-
-    currentPricePerSlot =
-      courtId && !Number.isNaN(parsedPrice) ? parsedPrice : DEFAULT_PRICE_PER_SLOT
+  async function onCourtChange(courtId: string, courtName: string, pricePerHour: number): Promise<void> {
+    courtInput!.value = courtId
+    currentCourtName = courtName
+    currentPricePerSlot = courtId ? pricePerHour : DEFAULT_PRICE_PER_SLOT
 
     courtNameText.textContent = currentCourtName || '-'
 
@@ -267,14 +329,29 @@ function createBookingPage(page: HTMLElement): void {
     selectSlot(slot)
   })
 
-  dateInput.addEventListener('change', () => {
-    if (courtInput.value) {
-      onCourtChange(courtInput.value)
+  createDateCarousel(dateInput, () => {
+    if (courtInput!.value) {
+      const activeBtn = courtBtnGroup?.querySelector('.court-btn.selected') as HTMLElement | null
+      onCourtChange(
+        courtInput!.value,
+        activeBtn?.dataset.courtName || currentCourtName,
+        Number(activeBtn?.dataset.price) || currentPricePerSlot
+      )
     }
   })
 
-  courtInput.addEventListener('change', () => {
-    onCourtChange(courtInput.value)
+  courtBtnGroup?.addEventListener('click', (event) => {
+    const btn = (event.target as HTMLElement).closest('.court-btn') as HTMLElement | null
+    if(!btn) return
+
+    courtBtnGroup.querySelectorAll('.court-btn').forEach((b) => b.classList.remove('selected'))
+    btn.classList.add('selected')
+
+    onCourtChange(
+      btn.dataset.courtId || '',
+      btn.dataset.courtName || '',
+      Number(btn.dataset.price) || DEFAULT_PRICE_PER_SLOT 
+    )
   })
 
   nextButton.addEventListener('click', () => {
@@ -301,7 +378,12 @@ function createBookingPage(page: HTMLElement): void {
   const preselectedTime = urlParams.get('time')
 
   if (courtInput.value) {
-    onCourtChange(courtInput.value).then(() => {
+    const activeBtn = courtBtnGroup?.querySelector('.court-btn.selected') as HTMLElement | null
+    onCourtChange(
+      courtInput.value,
+      activeBtn?.dataset.courtName || page.dataset.courtName || '',
+      Number(activeBtn?.dataset.price) || Number(page.dataset.courtPrice) || DEFAULT_PRICE_PER_SLOT
+    ).then(() => {
       if (
         preselectedTime &&
         ALL_SLOTS.includes(preselectedTime) &&

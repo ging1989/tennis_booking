@@ -70,7 +70,7 @@
                 -
             @end
           </td>
-          <td>
+          <td style="text-align: center">
             @if(booking.status === 'pending')
             <form action="/admin/bookings/{{ booking.id }}/confirm" method="post" style="display: inline-block;">
                 {{ csrfField() }}

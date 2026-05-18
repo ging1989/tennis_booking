@@ -36,10 +36,15 @@
 
     <div class="booking-field">
       <label>วันที่เข้าใช้บริการ</label>
-      <input type="date" id="booking-date" value="{{ bookingDate || '' }}">
+      <div class="date-carousel" id="date-carousel">
+        <button type="button" class="date-carousel-arrow" id="date-prev">&#8249;</button>
+        <div class="date-carousel-track" id="date-track"></div>
+        <button type="button" class="date-carousel-arrow" id="date-next">&#8250;</button>
+      </div>
+      <input type="hidden" id="booking-date" value="{{ bookingDate || '' }}">
     </div>
 
-    <div class="booking-field">
+{{--     <div class="booking-field">
       <label>เลือกสนาม</label>
 
       <select class="ui dropdown" id="court-select">
@@ -55,6 +60,24 @@
           </option>
         @end
       </select>
+    </div> --}}
+
+    <div class="booking-field">
+      <label>เลือกสนาม</label>
+      <div class="court-btn-group" id="court-btn-group">
+        @each(c in courts)
+          <button
+            type="button"
+            class="court-btn{{ court && court.id === c.id ? ' selected' : '' }}"
+            data-court-id="{{ c.id }}"
+            data-court-name="{{ c.courtName }}"
+            data-price="{{ c.pricePerHour }}"
+          >
+            {{ c.courtName }}
+          </button>
+        @end
+      </div>
+      <input type="hidden" id="court-select" value="{{ court ? court.id : '' }}">
     </div>
 
     <div class="slot-status">

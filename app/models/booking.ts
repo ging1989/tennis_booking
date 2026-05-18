@@ -41,9 +41,6 @@ export default class Booking extends BaseModel {
   declare totalPrice: number
 
   @column()
-  declare discount: number
-
-  @column()
   declare status: 'pending' | 'confirmed' | 'cancelled'
 
   @column()

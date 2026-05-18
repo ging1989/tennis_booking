@@ -28,12 +28,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column()
   declare role: string
 
-  @column()
-  declare memberType: string
-
-  @column()
-  declare points: number
-
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

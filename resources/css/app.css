@@ -409,6 +409,132 @@ select,
   margin-bottom: 16px;
 }
 
+.date-carousel {
+  align-items: stretch;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px #e5e7eb;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+}
+
+.date-carousel-arrow {
+  appearance: none;
+  align-items: center;
+  background: none;
+  border: none;
+  border-right: 1px solid #e5e7eb;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 1.3rem;
+  justify-content: center;
+  padding: 0 12px;
+  transition: background 0.15s, color 0.15s;
+}
+
+#date-next {
+  border-left: 1px solid #e5e7eb;
+  border-right: none;
+}
+
+.date-carousel-arrow:hover:not(:disabled) {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.date-carousel-arrow:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.date-carousel-track {
+  display: flex;
+  flex: 1;
+}
+
+.date-btn {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-right: 1px solid #e5e7eb;
+  cursor: pointer;
+  flex: 1;
+  font: inherit;
+  padding: 6px 4px;
+  text-align: center;
+  transition: background 0.15s, border-bottom-color 0.15s;
+}
+
+.date-btn:last-child {
+  border-right: none;
+}
+
+.date-btn:hover {
+  background: #f9fafb;
+}
+
+.date-btn.selected {
+  border-bottom-color: #111827;
+  font-weight: 700;
+}
+
+.date-btn-day {
+  display: block;
+  font-size: 12px;
+  opacity: 0.55;
+}
+
+.date-btn.selected .date-btn-day {
+  opacity: 0.75;
+}
+
+.date-btn-num {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.date-btn.selected .date-btn-num {
+  font-weight: 700;
+}
+
+.court-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.court-btn {
+  appearance: none;
+  background: #fff;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  color: #374151;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 10px 20px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.court-btn:hover {
+  background: #e8f7ef;
+  border-color: #16643b;
+  color: #16643b;
+}
+
+.court-btn.selected {
+  background: #16643b;
+  border-color: #16643b;
+  color: #fff;
+  font-weight: 600;
+}
+
 .booking-field label {
   display: block;
   font-weight: 600;
@@ -967,6 +1093,10 @@ i.icon {
 
 .admin-table thead th {
   text-align: center !important;
+}
+
+.admin-table tbody td {
+  font-size: 0.85rem;
 }
 
 .admin-empty-state {
