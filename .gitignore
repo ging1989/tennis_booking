@@ -13,6 +13,7 @@ tmp
 public/assets
 
 # Build tools specific
+*.log
 npm-debug.log
 yarn-error.log
 
@@ -23,3 +24,5 @@ yarn-error.log
 
 # Platform specific
 .DS_Store
+
+public/uploads/
