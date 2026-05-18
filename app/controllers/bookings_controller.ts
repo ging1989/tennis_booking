@@ -24,6 +24,12 @@ type BookingData = {
   total_price: number
 }
 
+function getBangkokToday() {
+  const now = new Date()
+  const bangkokMs = now.getTime() + 7 * 60 * 60 * 1000
+  return new Date(bangkokMs).toISOString().split('T')[0]
+}
+
 function slotToMinutes(time: string) {
   const [hours, minutes] = time.split(':').map(Number)
   return hours * 60 + minutes
@@ -154,7 +160,7 @@ export default class BookingsController {
     const courts = await Court.query().orderBy('court_name', 'asc')
     const courtId = request.input('court')
     const court = courtId ? await Court.find(courtId) : null
-    const bookingDate = request.input('date') || new Date().toISOString().split('T')[0]
+    const bookingDate = request.input('date') || getBangkokToday()
     return view.render('pages/booking', { courts, court, bookingDate })
   }
 
@@ -226,8 +232,9 @@ export default class BookingsController {
       )
     }
 
-    await slip.move(app.publicPath('uploads/slips'))
-    const slipPath = `uploads/slips/${slip.fileName}`
+    const uniqueFileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${slip.extname}`
+    await slip.move(app.publicPath('uploads/slips'), { name: uniqueFileName })
+    const slipPath = `uploads/slips/${uniqueFileName}`
 
     try {
       await db.transaction(async (trx) => {
